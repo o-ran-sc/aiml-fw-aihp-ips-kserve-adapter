@@ -23,17 +23,33 @@ import (
 	"archive/tar"
 	"compress/gzip"
 	"io"
+	"math/rand"
 	"net/http"
 	netUrl "net/url"
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/api/commons/url"
 	"github.com/pkg/errors"
 
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/logger"
 )
+
+const (
+	pathLength    = 20
+	letterBytes   = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	letterIdxBits = 6
+	letterIdxMask = 1<<letterIdxBits - 1
+	letterIdxMax  = 63 / letterIdxBits
+)
+
+var randSrc rand.Source
+
+func init() {
+	randSrc = rand.NewSource(time.Now().UnixNano())
+}
 
 func fetchHelmPackageFromOnboard(url string) (path string, err error) {
 	logger.Logging(logger.DEBUG, "IN")
@@ -45,7 +61,7 @@ func fetchHelmPackageFromOnboard(url string) (path string, err error) {
 	}
 	defer resp.Body.Close()
 
-	path = "/tmp"
+	path = generateRandPath(pathLength)
 
 	err = Untar(path, resp.Body)
 	if err != nil {
@@ -172,4 +188,25 @@ func mkdirectory(name string) (err error) {
 		}
 	}
 	return
+}
+
+func generateRandPath(n int) string {
+	logger.Logging(logger.DEBUG, "IN")
+	defer logger.Logging(logger.DEBUG, "OUT")
+
+	sb := strings.Builder{}
+	sb.Grow(n)
+	for i, cache, remain := n-1, randSrc.Int63(), letterIdxMax; i >= 0; {
+		if remain == 0 {
+			cache, remain = randSrc.Int63(), letterIdxMax
+		}
+		if idx := int(cache & letterIdxMask); idx < len(letterBytes) {
+			sb.WriteByte(letterBytes[idx])
+			i--
+		}
+		cache >>= letterIdxBits
+		remain--
+	}
+
+	return sb.String()
 }
