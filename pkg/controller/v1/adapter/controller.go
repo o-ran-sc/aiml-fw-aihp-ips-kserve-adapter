@@ -17,53 +17,43 @@ limitations under the License.
 ==================================================================================
 */
 
-package deployment
+package adapter
 
 import (
-	"net/http"
+	"os"
 
-	"github.com/gin-gonic/gin"
-
-	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/api/commons/utils"
-	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/errors"
+	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/client/kserve"
+	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/client/onboard"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/logger"
-	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/controller/v1/adapter"
 )
 
 type Command interface {
-	Deploy(c *gin.Context)
+	Deploy(name string, version string) error
 }
 
 type Executor struct {
 	Command
 }
 
-var ipsAdapter adapter.Command
+var kserveClient kserve.Command
+var onboardClient onboard.Command
 
 func init() {
-	ipsAdapter = adapter.Executor{}
+	kserveClient = &kserve.Client{}
+	onboardClient = onboard.Executor{}
+
+	kubeconfigPath := os.Getenv("KUBECONFIG")
+	err := kserveClient.Init(kubeconfigPath)
+	if err != nil {
+		os.Exit(8)
+	}
 }
 
-func (Executor) Deploy(c *gin.Context) {
+func (Executor) Deploy(name string, version string) error {
 	logger.Logging(logger.DEBUG, "IN")
 	defer logger.Logging(logger.DEBUG, "OUT")
 
-	name := c.Query("name")
-	if name == "" {
-		utils.WriteError(c.Writer, errors.InvalidIPSName{Message: "Empty Query"})
-		return
-	}
+	// TODO: Get object from onboard & Deploy using kserveClient
 
-	version := c.Query("version")
-	if version == "" {
-		utils.WriteError(c.Writer, errors.InvalidIPSName{Message: "Empty Query"})
-		return
-	}
-
-	err := ipsAdapter.Deploy(name, version)
-	if err != nil {
-		utils.WriteError(c.Writer, err)
-		return
-	}
-	utils.WriteSuccess(c.Writer, http.StatusCreated, nil)
+	return nil
 }
