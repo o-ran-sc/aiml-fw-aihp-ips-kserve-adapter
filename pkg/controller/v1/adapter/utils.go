@@ -21,61 +21,57 @@ package adapter
 
 import (
 	"os"
+	"path/filepath"
 
-	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/client/kserve"
-	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/client/onboard"
+	"gopkg.in/yaml.v1"
+
+	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/errors"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/logger"
+	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/types"
 )
 
-type Command interface {
-	Deploy(name string, version string) (string, error)
-}
-
-type Executor struct {
-	Command
-}
-
-var kserveClient kserve.Command
-var onboardClient onboard.Command
-
-var removeFunc func(string) error
-
-func init() {
-	kserveClient = &kserve.Client{}
-
-	kubeconfigPath := os.Getenv("KUBECONFIG")
-	err := kserveClient.Init(kubeconfigPath)
-	if err != nil {
-		os.Exit(8)
-	}
-
-	onboardClient = onboard.Executor{}
-
-	removeFunc = func(path string) (err error) {
-		err = os.RemoveAll(path)
-		return
-	}
-}
-
-func (Executor) Deploy(name string, version string) (revision string, err error) {
+func valueParse(path string) (values types.Values, err error) {
 	logger.Logging(logger.DEBUG, "IN")
 	defer logger.Logging(logger.DEBUG, "OUT")
 
-	path, err := onboardClient.Download(name, version)
+	filePath, err := getValuesFilePath(path)
 	if err != nil {
 		return
 	}
-	defer removeFunc(path)
 
-	values, err := valueParse(path)
+	b, err := os.ReadFile(filePath)
 	if err != nil {
 		logger.Logging(logger.ERROR, err.Error())
+		err = errors.IOError{Message: err.Error()}
 		return
 	}
 
-	revision, err = kserveClient.Create(values)
+	err = yaml.Unmarshal(b, &values)
 	if err != nil {
+		logger.Logging(logger.ERROR, err.Error())
+		err = errors.IOError{Message: err.Error()}
 		return
 	}
+	values.CanaryTrafficPercent = -1
+
+	return
+}
+
+func getValuesFilePath(root string) (path string, err error) {
+	logger.Logging(logger.DEBUG, "IN")
+	defer logger.Logging(logger.DEBUG, "OUT")
+
+	files, err := os.ReadDir(root)
+	if err != nil {
+		logger.Logging(logger.ERROR, err.Error())
+		return "", errors.IOError{Message: err.Error()}
+	}
+
+	for _, file := range files {
+		if file.IsDir() {
+			path = filepath.Join(root, file.Name())
+		}
+	}
+	path = filepath.Join(path, "values.yaml")
 	return
 }

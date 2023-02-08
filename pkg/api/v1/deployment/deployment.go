@@ -60,7 +60,7 @@ func (Executor) Deploy(c *gin.Context) {
 		return
 	}
 
-	err := ipsAdapter.Deploy(name, version)
+	_, err := ipsAdapter.Deploy(name, version)
 	if err != nil {
 		utils.WriteError(c.Writer, err)
 		return

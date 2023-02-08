@@ -27,6 +27,7 @@ import (
 
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/errors"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/logger"
+	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/types"
 )
 
 const (
@@ -37,6 +38,7 @@ var ifsvGetter func(string) (client_v1beta1.InferenceServiceInterface, error)
 
 type Command interface {
 	Init(kubeconfigPath string) error
+	Create(values types.Values) (string, error)
 }
 
 type Client struct {
@@ -77,6 +79,24 @@ func (c *Client) Init(kubeconfigPath string) (err error) {
 
 	c.api, err = ifsvGetter(kubeconfigPath)
 	if err != nil {
+		err = errors.InternalServerError{Message: err.Error()}
+		return
+	}
+	return
+}
+
+func (c *Client) Create(values types.Values) (revision string, err error) {
+	logger.Logging(logger.DEBUG, "IN")
+	defer logger.Logging(logger.DEBUG, "OUT")
+
+	info := convertValuesToInferenceService(values)
+	if err != nil {
+		return
+	}
+
+	_, err = c.api.Create(&info)
+	if err != nil {
+		logger.Logging(logger.ERROR, err.Error())
 		err = errors.InternalServerError{Message: err.Error()}
 		return
 	}
