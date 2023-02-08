@@ -17,57 +17,43 @@ limitations under the License.
 ==================================================================================
 */
 
-package api
+package deployment
 
 import (
+	"errors"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 
-	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/api/commons/url"
-	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/api/v1/deployment"
+	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/api/commons/utils"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/logger"
 )
 
-var deploymentExecutor deployment.Command
-
-func init() {
-	deploymentExecutor = deployment.Executor{}
+type Command interface {
+	Deploy(c *gin.Context)
 }
 
-func setupRouter() (router *gin.Engine) {
-	router = gin.Default()
-
-	v1 := router.Group(url.V1())
-	{
-		deployment := v1.Group(url.IPS())
-		{
-			deployment.POST("", deploymentExecutor.Deploy)
-			// deployment.PUT
-			// deployment.DELETE
-		}
-
-		healthcheck := v1.Group(url.Healthcheck())
-		// healthcheck.GET()
-
-		revision := v1.Group(url.IPS() + url.Revision())
-		// revision.GET()
-
-		status := v1.Group(url.IPS() + url.Status())
-		// status.GET()
-
-		info := v1.Group(url.IPS() + url.Info())
-		// info.GET()
-
-		_, _, _, _ = healthcheck, revision, status, info
-	}
-
-	return
+type Executor struct {
+	Command
 }
 
-func RunWebServer(port string) {
+func (Executor) Deploy(c *gin.Context) {
 	logger.Logging(logger.DEBUG, "IN")
 	defer logger.Logging(logger.DEBUG, "OUT")
 
-	r := setupRouter()
+	name := c.Query("name")
+	if name == "" {
+		utils.WriteError(c.Writer, errors.New("empty query"))
+		return
+	}
 
-	r.Run(":" + port)
+	version := c.Query("version")
+	if version == "" {
+		utils.WriteError(c.Writer, errors.New("empty query"))
+		return
+	}
+
+	// kserve client deploy logic
+
+	utils.WriteSuccess(c.Writer, http.StatusCreated, nil)
 }
