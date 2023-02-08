@@ -17,31 +17,50 @@ limitations under the License.
 ==================================================================================
 */
 
-package main
+package api
 
 import (
-	"os"
+	"github.com/gin-gonic/gin"
 
-	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/api"
+	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/api/commons/url"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/logger"
 )
 
-var (
-	apiServerPort string
-)
+func setupRouter() (router *gin.Engine) {
+	router = gin.Default()
 
-func init() {
-	apiServerPort = os.Getenv("API_SERVER_PORT")
+	v1 := router.Group(url.V1())
+	{
+		deployment := v1.Group(url.IPS())
+		{
+			// deployment.POST
+			// deployment.PUT
+			// deployment.DELETE
+		}
+
+		healthcheck := v1.Group(url.Healthcheck())
+		// healthcheck.GET()
+
+		revision := v1.Group(url.IPS() + url.Revision())
+		// revision.GET()
+
+		status := v1.Group(url.IPS() + url.Status())
+		// status.GET()
+
+		info := v1.Group(url.IPS() + url.Info())
+		// info.GET()
+
+		_, _, _, _, _ = deployment, healthcheck, revision, status, info
+	}
+
+	return
 }
 
-func main() {
+func RunWebServer(port string) {
 	logger.Logging(logger.DEBUG, "IN")
 	defer logger.Logging(logger.DEBUG, "OUT")
 
-	if apiServerPort == "" {
-		logger.Logging(logger.ERROR, "invalid port num")
-		os.Exit(1)
-	}
+	r := setupRouter()
 
-	api.RunWebServer(apiServerPort)
+	r.Run(":" + port)
 }

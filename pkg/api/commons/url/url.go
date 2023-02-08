@@ -17,31 +17,25 @@ limitations under the License.
 ==================================================================================
 */
 
-package main
+package url
 
-import (
-	"os"
+// V1 returns the v1 url as a type of string.
+func V1() string { return "/v1" }
 
-	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/api"
-	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/logger"
-)
+// Onboard returns the onboard url as a type of string.
+func Onboard() string { return "/onboard/api/v1/charts" }
 
-var (
-	apiServerPort string
-)
+// IPS returns the ips url as a type of string.
+func IPS() string { return "/ips" }
 
-func init() {
-	apiServerPort = os.Getenv("API_SERVER_PORT")
-}
+// Healthcheck returns the healthcheck url as a type of string.
+func Healthcheck() string { return "/healthcheck" }
 
-func main() {
-	logger.Logging(logger.DEBUG, "IN")
-	defer logger.Logging(logger.DEBUG, "OUT")
+// Revision returns the revision url as a type of string.
+func Revision() string { return "/revision" }
 
-	if apiServerPort == "" {
-		logger.Logging(logger.ERROR, "invalid port num")
-		os.Exit(1)
-	}
+// Status returns the status url as a type of string.
+func Status() string { return "/status" }
 
-	api.RunWebServer(apiServerPort)
-}
+// Info returns the status url as a type of string.
+func Info() string { return "/info" }
