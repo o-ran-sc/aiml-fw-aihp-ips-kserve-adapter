@@ -39,3 +39,9 @@ func Status() string { return "/status" }
 
 // Info returns the status url as a type of string.
 func Info() string { return "/info" }
+
+// IPSName returns the name url as a type of string.
+func IPSName() string { return "/{name}" }
+
+// Version returns the version url as a type of string.
+func Version() string { return "/ver" }
