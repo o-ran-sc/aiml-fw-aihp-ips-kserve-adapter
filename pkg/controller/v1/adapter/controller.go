@@ -31,7 +31,7 @@ import (
 type Command interface {
 	Deploy(name string, version string) (string, error)
 	Delete(name string) error
-	Update(name string, version string) (string, error)
+	Update(name string, version string, canaryTrafficRatio string) (string, error)
 }
 
 type Executor struct {
@@ -102,7 +102,7 @@ func (Executor) Delete(name string) (err error) {
 	return
 }
 
-func (Executor) Update(name string, version string) (revision string, err error) {
+func (Executor) Update(name string, version string, canaryTrafficRatio string) (revision string, err error) {
 	logger.Logging(logger.DEBUG, "IN")
 	defer logger.Logging(logger.DEBUG, "OUT")
 
@@ -117,6 +117,8 @@ func (Executor) Update(name string, version string) (revision string, err error)
 		logger.Logging(logger.ERROR, err.Error())
 		return
 	}
+
+	setCanaryTrafficRatio(&values, canaryTrafficRatio)
 
 	ifsv, err := kserveClient.Get(name)
 	if err != nil {

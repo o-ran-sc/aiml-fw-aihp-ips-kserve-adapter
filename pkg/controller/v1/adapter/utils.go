@@ -22,6 +22,7 @@ package adapter
 import (
 	"os"
 	"path/filepath"
+	"strconv"
 
 	"gopkg.in/yaml.v1"
 
@@ -74,4 +75,15 @@ func getValuesFilePath(root string) (path string, err error) {
 	}
 	path = filepath.Join(path, "values.yaml")
 	return
+}
+
+func setCanaryTrafficRatio(values *types.Values, ratio string) {
+	logger.Logging(logger.DEBUG, "IN")
+	defer logger.Logging(logger.DEBUG, "OUT")
+
+	trafficRatio, err := strconv.Atoi(ratio)
+	if err != nil {
+		trafficRatio = -1
+	}
+	values.CanaryTrafficPercent = int64(trafficRatio)
 }

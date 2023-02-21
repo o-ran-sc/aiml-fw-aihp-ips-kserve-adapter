@@ -105,7 +105,9 @@ func (Executor) Update(c *gin.Context) {
 		return
 	}
 
-	_, err := ipsAdapter.Update(name, version)
+	canaryTrafficRatio := c.Query("canary")
+
+	_, err := ipsAdapter.Update(name, version, canaryTrafficRatio)
 	if err != nil {
 		utils.WriteError(c.Writer, err)
 		return
