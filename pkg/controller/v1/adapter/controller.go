@@ -24,11 +24,14 @@ import (
 
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/client/kserve"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/client/onboard"
+	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/errors"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/logger"
 )
 
 type Command interface {
 	Deploy(name string, version string) (string, error)
+	Delete(name string) error
+	Update(name string, version string) (string, error)
 }
 
 type Executor struct {
@@ -74,6 +77,54 @@ func (Executor) Deploy(name string, version string) (revision string, err error)
 	}
 
 	revision, err = kserveClient.Create(values)
+	if err != nil {
+		return
+	}
+	return
+}
+
+func (Executor) Delete(name string) (err error) {
+	logger.Logging(logger.DEBUG, "IN")
+	defer logger.Logging(logger.DEBUG, "OUT")
+
+	err = onboardClient.Get(name)
+	if err != nil {
+		err = errors.InvalidIPSName{
+			Message: err.Error(),
+		}
+		return
+	}
+
+	err = kserveClient.Delete(name)
+	if err != nil {
+		return
+	}
+	return
+}
+
+func (Executor) Update(name string, version string) (revision string, err error) {
+	logger.Logging(logger.DEBUG, "IN")
+	defer logger.Logging(logger.DEBUG, "OUT")
+
+	path, err := onboardClient.Download(name, version)
+	if err != nil {
+		return
+	}
+	defer removeFunc(path)
+
+	values, err := valueParse(path)
+	if err != nil {
+		logger.Logging(logger.ERROR, err.Error())
+		return
+	}
+
+	ifsv, err := kserveClient.Get(name)
+	if err != nil {
+		return
+	}
+	values.ResourceVersion = ifsv.ResourceVersion
+
+	revision, err = kserveClient.Update(values)
 	if err != nil {
 		return
 	}

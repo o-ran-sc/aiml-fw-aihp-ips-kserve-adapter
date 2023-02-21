@@ -32,6 +32,8 @@ import (
 
 type Command interface {
 	Deploy(c *gin.Context)
+	Delete(c *gin.Context)
+	Update(c *gin.Context)
 }
 
 type Executor struct {
@@ -65,5 +67,49 @@ func (Executor) Deploy(c *gin.Context) {
 		utils.WriteError(c.Writer, err)
 		return
 	}
+	utils.WriteSuccess(c.Writer, http.StatusCreated, nil)
+}
+
+func (Executor) Delete(c *gin.Context) {
+	logger.Logging(logger.DEBUG, "IN")
+	defer logger.Logging(logger.DEBUG, "OUT")
+
+	name := c.Query("name")
+	if name == "" {
+		utils.WriteError(c.Writer, errors.InvalidIPSName{Message: "Empty Query"})
+		return
+	}
+
+	err := ipsAdapter.Delete(name)
+	if err != nil {
+		utils.WriteError(c.Writer, err)
+		return
+	}
+
+	utils.WriteSuccess(c.Writer, http.StatusNoContent, nil)
+}
+
+func (Executor) Update(c *gin.Context) {
+	logger.Logging(logger.DEBUG, "IN")
+	defer logger.Logging(logger.DEBUG, "OUT")
+
+	name := c.Query("name")
+	if name == "" {
+		utils.WriteError(c.Writer, errors.InvalidIPSName{Message: "Empty Query"})
+		return
+	}
+
+	version := c.Query("version")
+	if version == "" {
+		utils.WriteError(c.Writer, errors.InvalidIPSName{Message: "Empty Query"})
+		return
+	}
+
+	_, err := ipsAdapter.Update(name, version)
+	if err != nil {
+		utils.WriteError(c.Writer, err)
+		return
+	}
+
 	utils.WriteSuccess(c.Writer, http.StatusCreated, nil)
 }

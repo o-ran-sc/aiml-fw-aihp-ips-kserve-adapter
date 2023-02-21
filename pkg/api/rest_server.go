@@ -41,8 +41,8 @@ func setupRouter() (router *gin.Engine) {
 		deployment := v1.Group(url.IPS())
 		{
 			deployment.POST("", deploymentExecutor.Deploy)
-			// deployment.PUT
-			// deployment.DELETE
+			deployment.DELETE("", deploymentExecutor.Delete)
+			deployment.PUT("", deploymentExecutor.Update)
 		}
 
 		healthcheck := v1.Group(url.Healthcheck())

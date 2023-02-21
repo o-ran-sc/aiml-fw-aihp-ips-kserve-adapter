@@ -23,6 +23,7 @@ import (
 	api_v1beta1 "github.com/kserve/kserve/pkg/apis/serving/v1beta1"
 	"github.com/kserve/kserve/pkg/client/clientset/versioned"
 	client_v1beta1 "github.com/kserve/kserve/pkg/client/clientset/versioned/typed/serving/v1beta1"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/tools/clientcmd"
 
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/errors"
@@ -39,6 +40,9 @@ var ifsvGetter func(string) (client_v1beta1.InferenceServiceInterface, error)
 type Command interface {
 	Init(kubeconfigPath string) error
 	Create(values types.Values) (string, error)
+	Delete(name string) error
+	Get(name string) (*api_v1beta1.InferenceService, error)
+	Update(values types.Values) (string, error)
 }
 
 type Client struct {
@@ -99,6 +103,51 @@ func (c *Client) Create(values types.Values) (revision string, err error) {
 		logger.Logging(logger.ERROR, err.Error())
 		err = errors.InternalServerError{Message: err.Error()}
 		return
+	}
+	return
+}
+
+func (c *Client) Delete(name string) (err error) {
+	logger.Logging(logger.DEBUG, "IN")
+	defer logger.Logging(logger.DEBUG, "OUT")
+
+	err = c.api.Delete(name, &v1.DeleteOptions{})
+	if err != nil {
+		logger.Logging(logger.ERROR, err.Error())
+		err = errors.NotFoundIPS{
+			Message: err.Error(),
+		}
+		return
+	}
+	return
+}
+
+func (c *Client) Get(name string) (ifsv *api_v1beta1.InferenceService, err error) {
+	logger.Logging(logger.DEBUG, "IN")
+	defer logger.Logging(logger.DEBUG, "OUT")
+
+	ifsv, err = c.api.Get(name, v1.GetOptions{})
+	if err != nil {
+		logger.Logging(logger.ERROR, err.Error())
+		err = errors.NotFoundIPS{Message: err.Error()}
+		return
+	}
+	return
+}
+
+func (c *Client) Update(values types.Values) (revision string, err error) {
+	logger.Logging(logger.DEBUG, "IN")
+	defer logger.Logging(logger.DEBUG, "OUT")
+
+	info := convertValuesToInferenceService(values)
+	if err != nil {
+		return
+	}
+
+	_, err = c.api.Update(&info)
+	if err != nil {
+		logger.Logging(logger.ERROR, err.Error())
+		err = errors.NotFoundIPS{Message: err.Error()}
 	}
 	return
 }
