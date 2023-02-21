@@ -20,12 +20,12 @@ limitations under the License.
 package deployment
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/api/commons/utils"
+	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/errors"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/logger"
 )
 
@@ -43,13 +43,13 @@ func (Executor) Deploy(c *gin.Context) {
 
 	name := c.Query("name")
 	if name == "" {
-		utils.WriteError(c.Writer, errors.New("empty query"))
+		utils.WriteError(c.Writer, errors.InvalidIPSName{Message: "Empty Query"})
 		return
 	}
 
 	version := c.Query("version")
 	if version == "" {
-		utils.WriteError(c.Writer, errors.New("empty query"))
+		utils.WriteError(c.Writer, errors.InvalidIPSName{Message: "Empty Query"})
 		return
 	}
 
