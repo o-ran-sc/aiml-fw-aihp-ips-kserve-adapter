@@ -15,6 +15,7 @@ require (
 )
 
 require (
+	github.com/golang/mock v1.4.4
 	github.com/spf13/viper v1.7.0
 	github.com/xeipuuv/gojsonschema v1.2.0
 )

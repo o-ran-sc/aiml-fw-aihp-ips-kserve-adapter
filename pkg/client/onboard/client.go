@@ -25,6 +25,7 @@ import (
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/logger"
 )
 
+//go:generate mockgen -source=client.go -destination=./mock/mock_client.go -package=mock
 type Command interface {
 	Get(name string) error
 	Download(name string, version string) (string, error)

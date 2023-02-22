@@ -4,3 +4,4 @@ docs/_build/
 pkg/helm/data/sample-xapp-2.2.0/
 *.tgz
 go.sum
+mock*.go

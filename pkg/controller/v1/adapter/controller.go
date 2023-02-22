@@ -28,6 +28,7 @@ import (
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/logger"
 )
 
+//go:generate mockgen -source=controller.go -destination=./mock/mock_controller.go -package=mock
 type Command interface {
 	Deploy(name string, version string) (string, error)
 	Delete(name string) error

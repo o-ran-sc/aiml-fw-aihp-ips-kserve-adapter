@@ -37,6 +37,7 @@ const (
 
 var ifsvGetter func(string) (client_v1beta1.InferenceServiceInterface, error)
 
+//go:generate mockgen -source=client.go -destination=./mock/mock_client.go -package=mock
 type Command interface {
 	Init(kubeconfigPath string) error
 	Create(values types.Values) (string, error)
