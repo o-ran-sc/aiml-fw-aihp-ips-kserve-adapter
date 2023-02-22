@@ -46,6 +46,7 @@ type Command interface {
 	Update(values types.Values) (string, error)
 	Revision(name string) (revisionList types.Revision, err error)
 	Status(name string) (statusList types.Status, err error)
+	Info(name string) (infoList types.Info, err error)
 }
 
 type Client struct {
@@ -231,6 +232,49 @@ func (c *Client) Status(name string) (statusList types.Status, err error) {
 			return
 		}
 		statusList.Status[ifsv.Name] = status
+	}
+
+	return
+}
+
+func (c *Client) Info(name string) (infoList types.Info, err error) {
+	logger.Logging(logger.DEBUG, "IN")
+	defer logger.Logging(logger.DEBUG, "OUT")
+
+	infoList.Info = make(map[string]types.InfoItem)
+
+	if name == "" {
+		ifsvList, e := c.api.List(v1.ListOptions{})
+		if e != nil {
+			logger.Logging(logger.ERROR, e.Error())
+			err = errors.InternalServerError{
+				Message: e.Error(),
+			}
+			return
+		}
+
+		for _, ifsv := range ifsvList.Items {
+			info, e := makeInfo(ifsv)
+			if e != nil {
+				err = e
+				return
+			}
+			infoList.Info[ifsv.Name] = info
+		}
+
+	} else {
+		ifsv, e := c.Get(name)
+		if e != nil {
+			err = e
+			return
+		}
+
+		info, e := makeInfo(*ifsv)
+		if e != nil {
+			err = e
+			return
+		}
+		infoList.Info[ifsv.Name] = info
 	}
 
 	return

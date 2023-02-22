@@ -162,3 +162,34 @@ func makeStatus(ifsv api_v1beta1.InferenceService) (status []types.StatusItem, e
 	}
 	return
 }
+
+func makeInfo(ifsv api_v1beta1.InferenceService) (info types.InfoItem, err error) {
+	logger.Logging(logger.DEBUG, "IN")
+	defer logger.Logging(logger.DEBUG, "OUT")
+
+	var resources []byte
+
+	switch {
+	case ifsv.Spec.Predictor.Tensorflow != nil:
+		resources, _ = json.Marshal(ifsv.Spec.Predictor.Tensorflow.Resources)
+	case ifsv.Spec.Predictor.SKLearn != nil:
+		resources, _ = json.Marshal(ifsv.Spec.Predictor.SKLearn.Resources)
+	default:
+		err = errors.InternalServerError{Message: "PredictorSpec does not have information."}
+		return
+	}
+
+	json.Unmarshal(resources, &info.Resources)
+
+	for _, traffic := range ifsv.Status.Components["predictor"].Traffic {
+		info.Traffic = append(info.Traffic, types.Traffic{
+			Tag:            traffic.Tag,
+			RevisionName:   traffic.RevisionName,
+			LatestRevision: strconv.FormatBool(*traffic.LatestRevision),
+			Percent:        strconv.FormatInt(*traffic.Percent, 10),
+			URL:            traffic.URL.String(),
+		})
+	}
+
+	return
+}
