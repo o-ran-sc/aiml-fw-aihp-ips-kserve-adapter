@@ -20,12 +20,14 @@ limitations under the License.
 package kserve
 
 import (
+	"encoding/json"
 	"strconv"
 
 	api_v1beta1 "github.com/kserve/kserve/pkg/apis/serving/v1beta1"
 	core_v1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
+	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/errors"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/logger"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/types"
 )
@@ -116,5 +118,22 @@ func convertValuesToInferenceService(values types.Values) (ifsv api_v1beta1.Infe
 		ifsv.ResourceVersion = values.ResourceVersion
 	}
 
+	return
+}
+
+func makeRevision(ifsv api_v1beta1.InferenceService) (revision types.RevisionItem, err error) {
+	logger.Logging(logger.DEBUG, "IN")
+	defer logger.Logging(logger.DEBUG, "OUT")
+
+	revisionInfo, exist := ifsv.Status.Components[api_v1beta1.PredictorComponent]
+	if !exist {
+		err = errors.InternalServerError{
+			Message: "PredictorComponent does not have revision information.",
+		}
+		return
+	}
+
+	data, _ := json.Marshal(revisionInfo)
+	json.Unmarshal(data, &revision)
 	return
 }

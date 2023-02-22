@@ -34,3 +34,14 @@ type Values struct {
 	ResourceVersion       string
 	CanaryTrafficPercent  int64
 }
+
+type RevisionItem struct {
+	LatestReadyRevision       string `json:"latestReadyRevision,omitempty" example:"{revision}" format:"string"`
+	LatestCreatedRevision     string `json:"latestCreatedRevision,omitempty" example:"{revision}" format:"string"`
+	PreviousRolledoutRevision string `json:"previousRolledoutRevision,omitempty" example:"{revision}" format:"string"`
+	LatestRolledoutRevision   string `json:"latestRolledoutRevision,omitempty" example:"{revision}" format:"string"`
+}
+
+type Revision struct {
+	Revision map[string]RevisionItem `json:"revision"`
+}

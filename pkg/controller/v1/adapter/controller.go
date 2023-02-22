@@ -26,6 +26,7 @@ import (
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/client/onboard"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/errors"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/logger"
+	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/types"
 )
 
 //go:generate mockgen -source=controller.go -destination=./mock/mock_controller.go -package=mock
@@ -33,6 +34,7 @@ type Command interface {
 	Deploy(name string, version string) (string, error)
 	Delete(name string) error
 	Update(name string, version string, canaryTrafficRatio string) (string, error)
+	Revision(name string) (revisionList types.Revision, err error)
 }
 
 type Executor struct {
@@ -131,5 +133,13 @@ func (Executor) Update(name string, version string, canaryTrafficRatio string) (
 	if err != nil {
 		return
 	}
+	return
+}
+
+func (Executor) Revision(name string) (result types.Revision, err error) {
+	logger.Logging(logger.DEBUG, "IN")
+	defer logger.Logging(logger.DEBUG, "OUT")
+
+	result, err = kserveClient.Revision(name)
 	return
 }

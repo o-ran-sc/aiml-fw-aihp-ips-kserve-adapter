@@ -44,6 +44,7 @@ type Command interface {
 	Delete(name string) error
 	Get(name string) (*api_v1beta1.InferenceService, error)
 	Update(values types.Values) (string, error)
+	Revision(name string) (revisionList types.Revision, err error)
 }
 
 type Client struct {
@@ -150,5 +151,46 @@ func (c *Client) Update(values types.Values) (revision string, err error) {
 		logger.Logging(logger.ERROR, err.Error())
 		err = errors.NotFoundIPS{Message: err.Error()}
 	}
+
+	return
+}
+
+func (c *Client) Revision(name string) (revisionList types.Revision, err error) {
+	logger.Logging(logger.DEBUG, "IN")
+	defer logger.Logging(logger.DEBUG, "OUT")
+
+	revisionList.Revision = make(map[string]types.RevisionItem)
+
+	if name == "" {
+		ifsvList, e := c.api.List(v1.ListOptions{})
+		if e != nil {
+			err = errors.InternalServerError{Message: e.Error()}
+			return
+		}
+
+		for _, ifsv := range ifsvList.Items {
+			revision, e := makeRevision(ifsv)
+			if e != nil {
+				err = e
+				return
+			}
+			revisionList.Revision[ifsv.Name] = revision
+		}
+
+	} else {
+		ifsv, e := c.Get(name)
+		if e != nil {
+			err = e
+			return
+		}
+
+		revision, e := makeRevision(*ifsv)
+		if e != nil {
+			err = e
+			return
+		}
+		revisionList.Revision[ifsv.Name] = revision
+	}
+
 	return
 }
