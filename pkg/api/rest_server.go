@@ -24,13 +24,18 @@ import (
 
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/api/commons/url"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/api/v1/deployment"
+	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/api/v1/healthcheck"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/logger"
 )
 
-var deploymentExecutor deployment.Command
+var (
+	deploymentExecutor  deployment.Command
+	healthcheckExecutor healthcheck.Command
+)
 
 func init() {
 	deploymentExecutor = deployment.Executor{}
+	healthcheckExecutor = healthcheck.Executor{}
 }
 
 func setupRouter() (router *gin.Engine) {
@@ -46,7 +51,9 @@ func setupRouter() (router *gin.Engine) {
 		}
 
 		healthcheck := v1.Group(url.Healthcheck())
-		// healthcheck.GET()
+		{
+			healthcheck.GET("", healthcheckExecutor.Ping)
+		}
 
 		revision := v1.Group(url.IPS() + url.Revision())
 		// revision.GET()
