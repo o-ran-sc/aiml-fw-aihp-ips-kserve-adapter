@@ -30,6 +30,7 @@ import (
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/controller/v1/adapter"
 )
 
+//go:generate mockgen -source=deployment.go -destination=./mock/mock_deployment.go -package=mock
 type Command interface {
 	Deploy(c *gin.Context)
 	Delete(c *gin.Context)
