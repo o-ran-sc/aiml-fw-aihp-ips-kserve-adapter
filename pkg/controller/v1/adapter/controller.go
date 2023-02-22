@@ -35,6 +35,7 @@ type Command interface {
 	Delete(name string) error
 	Update(name string, version string, canaryTrafficRatio string) (string, error)
 	Revision(name string) (revisionList types.Revision, err error)
+	Status(name string) (types.Status, error)
 }
 
 type Executor struct {
@@ -141,5 +142,13 @@ func (Executor) Revision(name string) (result types.Revision, err error) {
 	defer logger.Logging(logger.DEBUG, "OUT")
 
 	result, err = kserveClient.Revision(name)
+	return
+}
+
+func (Executor) Status(name string) (result types.Status, err error) {
+	logger.Logging(logger.DEBUG, "IN")
+	defer logger.Logging(logger.DEBUG, "OUT")
+
+	result, err = kserveClient.Status(name)
 	return
 }

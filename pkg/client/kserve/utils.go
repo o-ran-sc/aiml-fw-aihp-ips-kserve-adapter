@@ -137,3 +137,28 @@ func makeRevision(ifsv api_v1beta1.InferenceService) (revision types.RevisionIte
 	json.Unmarshal(data, &revision)
 	return
 }
+
+func makeStatus(ifsv api_v1beta1.InferenceService) (status []types.StatusItem, err error) {
+	logger.Logging(logger.DEBUG, "IN")
+	defer logger.Logging(logger.DEBUG, "OUT")
+
+	if len(ifsv.Status.Conditions) == 0 {
+		logger.Logging(logger.ERROR, "condition is empty")
+		err = errors.InternalServerError{
+			Message: "condition is empty",
+		}
+		return
+	}
+
+	for _, condition := range ifsv.Status.Conditions {
+		status = append(status, types.StatusItem{
+			Type:               string(condition.Type),
+			Status:             string(condition.Status),
+			Severity:           string(condition.Severity),
+			Reason:             condition.Reason,
+			Message:            condition.Message,
+			LastTransitionTime: condition.LastTransitionTime.Inner.String(),
+		})
+	}
+	return
+}

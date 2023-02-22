@@ -45,6 +45,7 @@ type Command interface {
 	Get(name string) (*api_v1beta1.InferenceService, error)
 	Update(values types.Values) (string, error)
 	Revision(name string) (revisionList types.Revision, err error)
+	Status(name string) (statusList types.Status, err error)
 }
 
 type Client struct {
@@ -190,6 +191,46 @@ func (c *Client) Revision(name string) (revisionList types.Revision, err error) 
 			return
 		}
 		revisionList.Revision[ifsv.Name] = revision
+	}
+
+	return
+}
+
+func (c *Client) Status(name string) (statusList types.Status, err error) {
+	logger.Logging(logger.DEBUG, "IN")
+	defer logger.Logging(logger.DEBUG, "OUT")
+
+	statusList.Status = make(map[string][]types.StatusItem)
+
+	if name == "" {
+		ifsvList, e := c.api.List(v1.ListOptions{})
+		if e != nil {
+			err = errors.InternalServerError{Message: e.Error()}
+			return
+		}
+
+		for _, ifsv := range ifsvList.Items {
+			status, e := makeStatus(ifsv)
+			if e != nil {
+				err = errors.InternalServerError{Message: e.Error()}
+				return
+			}
+			statusList.Status[ifsv.Name] = status
+		}
+
+	} else {
+		ifsv, e := c.Get(name)
+		if e != nil {
+			err = e
+			return
+		}
+
+		status, e := makeStatus(*ifsv)
+		if e != nil {
+			err = e
+			return
+		}
+		statusList.Status[ifsv.Name] = status
 	}
 
 	return

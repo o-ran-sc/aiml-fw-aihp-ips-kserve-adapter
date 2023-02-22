@@ -42,6 +42,19 @@ type RevisionItem struct {
 	LatestRolledoutRevision   string `json:"latestRolledoutRevision,omitempty" example:"{revision}" format:"string"`
 }
 
+type StatusItem struct {
+	Type               string `json:"type" example:"{status type}" format:"string"`
+	Status             string `json:"status" example:"{True / False}" format:"string"`
+	Severity           string `json:"severity,omitempty" example:"{severity}" format:"string"`
+	LastTransitionTime string `json:"lastTransitionTime,omitempty" example:"{time stamp}" format:"string"`
+	Reason             string `json:"reason,omitempty" example:"{reason}" format:"string"`
+	Message            string `json:"message,omitempty" example:"{message}" format:"string"`
+}
+
 type Revision struct {
 	Revision map[string]RevisionItem `json:"revision"`
+}
+
+type Status struct {
+	Status map[string][]StatusItem `json:"status"`
 }
