@@ -51,10 +51,41 @@ type StatusItem struct {
 	Message            string `json:"message,omitempty" example:"{message}" format:"string"`
 }
 
+type Traffic struct {
+	Tag            string `json:"tag,omitempty" example:"prev" format:"string"`
+	RevisionName   string `json:"revisionName" example:"{revision}" format:"string"`
+	LatestRevision string `json:"latestRevision,omitempty" example:"{True / False}" format:"string"`
+	Percent        string `json:"percent,omitempty" example:"90" format:"string"`
+	URL            string `json:"url,omitempty" example:"url" format:"string"`
+}
+
+type Resources struct {
+	Limits   Limits   `json:"limits"`
+	Requests Requests `json:"requests"`
+}
+
+type Limits struct {
+	CPU    string `json:"cpu" example:"{1}" format:"string"`
+	Memory string `json:"memory" example:"{2Gi}" format:"string"`
+}
+
+type Requests struct {
+	CPU    string `json:"cpu" example:"{1}" format:"string"`
+	Memory string `json:"memory" example:"{2Gi}" format:"string"`
+}
+
+type InfoItem struct {
+	Traffic   []Traffic `json:"traffic"`
+	Resources Resources `json:"resources"`
+}
 type Revision struct {
 	Revision map[string]RevisionItem `json:"revision"`
 }
 
 type Status struct {
 	Status map[string][]StatusItem `json:"status"`
+}
+
+type Info struct {
+	Info map[string]InfoItem `json:"info"`
 }
