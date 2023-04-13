@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c1a05cd7_ef87b21f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000402
+      },
+      "writtenOn": "2023-04-13T11:26:18Z",
+      "side": 1,
+      "message": "Thanks for adding logger :)",
+      "revId": "6cf690832be62bfff9eb88cdb86df0bd8ab8b43f",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    }
+  ]
+}
