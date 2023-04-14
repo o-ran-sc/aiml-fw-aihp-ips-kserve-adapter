@@ -20,6 +20,7 @@ package helm
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"os"
 
@@ -31,6 +32,10 @@ type ChartBuilder struct {
 
 func NewChartBuilder() ChartBuilder {
 	return ChartBuilder{}
+}
+
+func (c *ChartBuilder) PackageChart() (err error) {
+	return errors.New("not yet implemented")
 }
 
 func (c *ChartBuilder) parseConfigFile(configFile string) (config Config, err error) {
@@ -63,4 +68,16 @@ func (c *ChartBuilder) parseSchemaFile(schemaFile string) (schema Schema, err er
 		return
 	}
 	return
+}
+
+func (c *ChartBuilder) helmLint() (err error) {
+	return errors.New("not yet implemented")
+}
+
+func (c *ChartBuilder) appendConfigToValuesYaml() (err error) {
+	return errors.New("not yet implemented")
+}
+
+func (c *ChartBuilder) changeChartNameVersion() (err error) {
+	return errors.New("not yet implemented")
 }

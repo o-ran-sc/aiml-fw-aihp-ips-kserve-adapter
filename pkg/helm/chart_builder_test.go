@@ -39,3 +39,31 @@ func TestParseSchemaFile(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotEmpty(t, schema)
 }
+
+func TestHelmLint(t *testing.T) {
+	chartBuilder := NewChartBuilder()
+	err := chartBuilder.helmLint()
+
+	assert.Nil(t, err)
+}
+
+func TestAppendConfigToValuesYaml(t *testing.T) {
+	chartBuilder := NewChartBuilder()
+	err := chartBuilder.appendConfigToValuesYaml()
+
+	assert.Nil(t, err)
+}
+
+func TestChangeChartNameVersion(t *testing.T) {
+	chartBuilder := NewChartBuilder()
+	err := chartBuilder.changeChartNameVersion()
+
+	assert.Nil(t, err)
+}
+
+func TestPackageChart(t *testing.T) {
+	chartBuilder := NewChartBuilder()
+	err := chartBuilder.PackageChart()
+
+	assert.Nil(t, err)
+}
