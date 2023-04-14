@@ -1,0 +1,13 @@
+{
+    "xapp_name": "sample_xapp",
+    "xapp_type": "inferenceservice",
+    "version": "2.2.0",
+    "sa_name": "default",
+    "inferenceservice": {
+        "engine": "tensorflow",
+        "storage_uri": "s3://mlpipeline/artifacts/sample-rl-pipeline-bbzh4/sample-rl-pipeline-bbzh4-949264085/sample-training-saved-model.tgz",
+        "api_version": "serving.kubeflow.org/v1beta1",
+        "min_replicas": 1,
+        "max_replicas": 1
+    }
+}
