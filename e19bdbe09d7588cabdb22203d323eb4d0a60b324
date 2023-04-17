@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e4694162_262d46c6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000402
+      },
+      "writtenOn": "2023-04-17T23:37:31Z",
+      "side": 1,
+      "message": "Thanks for implementing of required APIs 👍",
+      "revId": "e19bdbe09d7588cabdb22203d323eb4d0a60b324",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    }
+  ]
+}
