@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "71f41e2d_2cb8acc2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000402
+      },
+      "writtenOn": "2023-04-18T02:34:13Z",
+      "side": 1,
+      "message": "It looks good to me for utils added.",
+      "revId": "9b29e50ace5f815a3d1371bf071f08896adf2b8b",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    }
+  ]
+}
