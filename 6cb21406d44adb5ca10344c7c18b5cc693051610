@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "106abe3d_45ea54bc",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002137
+      },
+      "writtenOn": "2023-04-18T23:00:56Z",
+      "side": 1,
+      "message": "Please take a look my comment.",
+      "revId": "6cb21406d44adb5ca10344c7c18b5cc693051610",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "907ef2e1_5a3e175f",
+        "filename": "pkg/helm/chart_builder.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1002137
+      },
+      "writtenOn": "2023-04-18T23:00:56Z",
+      "side": 1,
+      "message": "Can you check the address? This is a github enterprise pkg and not public.",
+      "revId": "6cb21406d44adb5ca10344c7c18b5cc693051610",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    }
+  ]
+}
