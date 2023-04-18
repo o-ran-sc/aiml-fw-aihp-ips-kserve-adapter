@@ -21,17 +21,172 @@ package helm
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 
-	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/logger"
+	"github.sec.samsung.net/RANIS/aiml-fw-aihp-ips-kserve-adapter/pkg/commons/logger"
 )
 
-type ChartBuilder struct {
+const (
+	VALUES_YAML = "values.yaml"
+	CHART_YAML  = "Chart.yaml"
+
+	SERVING_VERSION_ALPHA = "serving.kubeflow.org/v1alpha2"
+	SERVING_VERSION_BETA  = "serving.kubeflow.org/v1beta1"
+	RESOURCE_ALPHA        = "'resources/xapp-inf-alpha'"
+	RESOURCE_BETA         = "'resources/xapp-inf-beta'"
+)
+
+type HelmChartBuilder interface {
+	PackageChart() (err error)
 }
 
-func NewChartBuilder() ChartBuilder {
-	return ChartBuilder{}
+type ChartBuilder struct {
+	config             Config
+	schema             Schema
+	chartWorkspacePath string
+	chartName          string
+	chartVersion       string
+}
+
+func NewChartBuilder(configFile string, schemaFile string) *ChartBuilder {
+	chartBuilder := &ChartBuilder{}
+	var err error
+
+	chartBuilder.config, err = chartBuilder.parseConfigFile(configFile)
+	if err != nil {
+		logger.Logging(logger.ERROR, err.Error())
+		return nil
+	}
+
+	if chartBuilder.config.XappName == "" || chartBuilder.config.Version == "" {
+		logger.Logging(logger.ERROR, fmt.Sprintf("some value is empty : xAppName = %s, Version = %s", chartBuilder.config.XappName, chartBuilder.config.Version))
+		return nil
+	}
+
+	chartBuilder.schema, err = chartBuilder.parseSchemaFile(schemaFile)
+	if err != nil {
+		logger.Logging(logger.ERROR, err.Error())
+		return nil
+	}
+
+	chartBuilder.chartName = chartBuilder.config.XappName
+	chartBuilder.chartVersion = chartBuilder.config.Version
+	chartBuilder.chartWorkspacePath = os.Getenv("CHART_WORKSPACE_PATH") + "/" + chartBuilder.chartName + "-" + chartBuilder.chartVersion
+
+	_, err = os.Stat(chartBuilder.chartWorkspacePath)
+	if err != nil {
+		if !os.IsNotExist(err) {
+			os.RemoveAll(chartBuilder.chartWorkspacePath)
+			os.Mkdir(chartBuilder.chartWorkspacePath, os.FileMode(644))
+		}
+	}
+
+	resourceVersionMap := map[string]string{
+		SERVING_VERSION_ALPHA: RESOURCE_ALPHA,
+		SERVING_VERSION_BETA:  RESOURCE_BETA,
+	}
+
+	apiVersion := chartBuilder.config.InferenceService.ApiVersion
+	resource := resourceVersionMap[apiVersion]
+	err = chartBuilder.copyDirectory("data/"+resource, chartBuilder.chartWorkspacePath+"/"+chartBuilder.chartName)
+	if err != nil {
+		logger.Logging(logger.ERROR, err.Error())
+		return nil
+	}
+
+	return chartBuilder
+
+}
+
+func (c *ChartBuilder) copyFile(src string, dest string) (err error) {
+	srcFile, err := os.Open(src)
+	if err != nil {
+		return
+	}
+	defer srcFile.Close()
+
+	destFile, err := os.Create(dest)
+	if err != nil {
+		return
+	}
+	defer func() {
+		if e := destFile.Close(); e != nil {
+			err = e
+		}
+	}()
+
+	_, err = io.Copy(destFile, srcFile)
+	if err != nil {
+		return
+	}
+	err = destFile.Sync()
+	if err != nil {
+		return
+	}
+	srcInfo, err := os.Stat(src)
+	if err != nil {
+		return
+	}
+
+	err = os.Chmod(dest, srcInfo.Mode())
+	if err != nil {
+		return
+	}
+	return
+}
+
+func (c *ChartBuilder) copyDirectory(src string, dest string) (err error) {
+	src = filepath.Clean(src)
+	dest = filepath.Clean(dest)
+
+	srcInfo, err := os.Stat(src)
+	if err != nil {
+		return
+	}
+	if !srcInfo.IsDir() {
+		return fmt.Errorf("src(%s) is not a directory", src)
+	}
+
+	_, err = os.Stat(dest)
+	if err != nil && !os.IsNotExist(err) {
+		return
+	}
+	if err == nil {
+		return fmt.Errorf("destination(%s) is already exists", dest)
+	}
+	err = os.MkdirAll(dest, srcInfo.Mode())
+	if err != nil {
+		return
+	}
+	entries, err := ioutil.ReadDir(src)
+	if err != nil {
+		return
+	}
+
+	for _, entry := range entries {
+		srcPath := filepath.Join(src, entry.Name())
+		destPath := filepath.Join(dest, entry.Name())
+
+		if entry.IsDir() {
+			err = c.copyDirectory(srcPath, destPath)
+			if err != nil {
+				return
+			}
+		} else {
+			if entry.Mode()&os.ModeSymlink != 0 {
+				continue
+			}
+			err = c.copyFile(srcPath, destPath)
+			if err != nil {
+				return
+			}
+		}
+	}
+	return
 }
 
 func (c *ChartBuilder) PackageChart() (err error) {
