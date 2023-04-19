@@ -51,6 +51,24 @@
       "parentUuid": "907ef2e1_5a3e175f",
       "revId": "6cb21406d44adb5ca10344c7c18b5cc693051610",
       "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d744406d_b5c56eab",
+        "filename": "pkg/helm/chart_builder.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1000279
+      },
+      "writtenOn": "2023-04-19T01:08:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9474d3c7_7f289ef2",
+      "revId": "6cb21406d44adb5ca10344c7c18b5cc693051610",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
     }
   ]
 }
