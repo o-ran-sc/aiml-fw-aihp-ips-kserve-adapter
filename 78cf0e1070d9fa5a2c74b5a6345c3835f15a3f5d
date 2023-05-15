@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "01b8f879_5d521fd8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001907
+      },
+      "writtenOn": "2023-05-15T07:10:39Z",
+      "side": 1,
+      "message": "Thanks for adding Hoejoo as commiter.",
+      "revId": "78cf0e1070d9fa5a2c74b5a6345c3835f15a3f5d",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    }
+  ]
+}
