@@ -27,6 +27,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/xeipuuv/gojsonschema"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/logger"
 )
 
@@ -34,10 +35,12 @@ const (
 	VALUES_YAML = "values.yaml"
 	CHART_YAML  = "Chart.yaml"
 
+	ENV_CHART_WORKSPACE_PATH = "CHART_WORKSPACE_PATH"
+
 	SERVING_VERSION_ALPHA = "serving.kubeflow.org/v1alpha2"
 	SERVING_VERSION_BETA  = "serving.kubeflow.org/v1beta1"
-	RESOURCE_ALPHA        = "'resources/xapp-inf-alpha'"
-	RESOURCE_BETA         = "'resources/xapp-inf-beta'"
+	RESOURCE_ALPHA        = "resources/inf-alpha"
+	RESOURCE_BETA         = "resources/inf-beta"
 )
 
 type HelmChartBuilder interface {
@@ -75,14 +78,19 @@ func NewChartBuilder(configFile string, schemaFile string) *ChartBuilder {
 
 	chartBuilder.chartName = chartBuilder.config.XappName
 	chartBuilder.chartVersion = chartBuilder.config.Version
-	chartBuilder.chartWorkspacePath = os.Getenv("CHART_WORKSPACE_PATH") + "/" + chartBuilder.chartName + "-" + chartBuilder.chartVersion
+	chartBuilder.chartWorkspacePath = os.Getenv(ENV_CHART_WORKSPACE_PATH) + "/" + chartBuilder.chartName + "-" + chartBuilder.chartVersion
 
 	_, err = os.Stat(chartBuilder.chartWorkspacePath)
 	if err != nil {
 		if !os.IsNotExist(err) {
 			os.RemoveAll(chartBuilder.chartWorkspacePath)
-			os.Mkdir(chartBuilder.chartWorkspacePath, os.FileMode(644))
 		}
+	}
+
+	err = os.Mkdir(chartBuilder.chartWorkspacePath, os.FileMode(0744))
+	if err != nil {
+		logger.Logging(logger.ERROR, err.Error())
+		return nil
 	}
 
 	resourceVersionMap := map[string]string{
@@ -153,13 +161,11 @@ func (c *ChartBuilder) copyDirectory(src string, dest string) (err error) {
 
 	_, err = os.Stat(dest)
 	if err != nil && !os.IsNotExist(err) {
-		return
-	}
-	if err == nil {
 		return fmt.Errorf("destination(%s) is already exists", dest)
 	}
-	err = os.MkdirAll(dest, srcInfo.Mode())
-	if err != nil {
+
+	err = os.Mkdir(dest, os.FileMode(0744))
+	if err != nil && !os.IsExist(err) {
 		return
 	}
 	entries, err := ioutil.ReadDir(src)
@@ -206,6 +212,7 @@ func (c *ChartBuilder) parseConfigFile(configFile string) (config Config, err er
 		logger.Logging(logger.ERROR, err.Error())
 		return
 	}
+	config.configFile = configFile
 	return
 }
 
@@ -222,6 +229,8 @@ func (c *ChartBuilder) parseSchemaFile(schemaFile string) (schema Schema, err er
 		logger.Logging(logger.ERROR, err.Error())
 		return
 	}
+
+	schema.schemaFile = schemaFile
 	return
 }
 
@@ -235,4 +244,24 @@ func (c *ChartBuilder) appendConfigToValuesYaml() (err error) {
 
 func (c *ChartBuilder) changeChartNameVersion() (err error) {
 	return errors.New("not yet implemented")
+}
+
+func (c *ChartBuilder) ValidateChartMaterials() (err error) {
+
+	schemaLoader := gojsonschema.NewReferenceLoader("file://" + c.schema.schemaFile)
+	configLoader := gojsonschema.NewReferenceLoader("file://" + c.config.configFile)
+
+	result, err := gojsonschema.Validate(schemaLoader, configLoader)
+
+	if err != nil {
+		return
+	}
+
+	if !result.Valid() {
+		for _, desc := range result.Errors() {
+			logger.Logging(logger.ERROR, fmt.Sprintf("[Invalid Config] - %s\n", desc))
+		}
+		return errors.New("Invalid Config")
+	}
+	return
 }
