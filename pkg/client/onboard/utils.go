@@ -28,12 +28,13 @@ import (
 	netUrl "net/url"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/api/commons/url"
-	"github.com/pkg/errors"
 
+	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/errors"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/logger"
 )
 
@@ -99,13 +100,13 @@ func requestToOnboard(url string) (*http.Response, error) {
 	resp, err := http.Get(url)
 	if err != nil {
 		logger.Logging(logger.ERROR, err.Error())
-		// TODO : define errors
-		return nil, errors.Wrap(err, "internal server error")
+		return nil, errors.InternalServerError{Message: err.Error()}
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		// TODO : define errors
-		err = errors.New("internal server error")
+		err = errors.InternalServerError{
+			Message: "onboard return error, status code : " + strconv.Itoa(int(resp.StatusCode)),
+		}
 		logger.Logging(logger.ERROR, err.Error())
 		return nil, err
 	}
