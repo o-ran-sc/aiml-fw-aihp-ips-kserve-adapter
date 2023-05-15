@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "54f6cd88_d0d77590",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001907
+      },
+      "writtenOn": "2023-05-15T11:26:25Z",
+      "side": 1,
+      "message": "Thanks for the update!\n\nIn the future, it may be necessary to change to the overridden \u0027errors\u0027 package.",
+      "revId": "549ecaa46020811d0f6f4b6949181c0d660b8011",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    }
+  ]
+}
