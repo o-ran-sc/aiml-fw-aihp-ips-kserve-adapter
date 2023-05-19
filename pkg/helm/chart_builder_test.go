@@ -19,10 +19,12 @@
 package helm
 
 import (
+	"flag"
 	"io/ioutil"
 	"os"
 	"testing"
 
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -43,13 +45,17 @@ func TestParseSchemaFile(t *testing.T) {
 }
 
 func TestHelmLint(t *testing.T) {
+	os.Setenv("CHART_WORKSPACE_PATH", "./data")
 	chartBuilder := NewChartBuilder("data/sample_config.json", "data/sample_schema.json")
-	err := chartBuilder.helmLint()
+	err := chartBuilder.appendConfigToValuesYaml()
+	assert.Nil(t, err)
 
+	err = chartBuilder.helmLint()
 	assert.Nil(t, err)
 }
 
 func TestAppendConfigToValuesYaml(t *testing.T) {
+	os.Setenv("CHART_WORKSPACE_PATH", "./data")
 	chartBuilder := NewChartBuilder("data/sample_config.json", "data/sample_schema.json")
 
 	err := chartBuilder.appendConfigToValuesYaml()
@@ -58,6 +64,7 @@ func TestAppendConfigToValuesYaml(t *testing.T) {
 }
 
 func TestChangeChartNameVersion(t *testing.T) {
+	os.Setenv("CHART_WORKSPACE_PATH", "./data")
 	chartBuilder := NewChartBuilder("data/sample_config.json", "data/sample_schema.json")
 	err := chartBuilder.changeChartNameVersion()
 
@@ -65,10 +72,21 @@ func TestChangeChartNameVersion(t *testing.T) {
 }
 
 func TestPackageChart(t *testing.T) {
+
+	var fileName *string
+	fileName = flag.String("f", "../../config/kserve-adapter.yaml", "Specify the configuration file.")
+	flag.Parse()
+
+	viper.SetConfigFile(*fileName)
+
+	os.Setenv("CHART_WORKSPACE_PATH", "./data")
 	chartBuilder := NewChartBuilder("data/sample_config.json", "data/sample_schema.json")
 	err := chartBuilder.PackageChart()
 
 	assert.Nil(t, err)
+	assert.FileExists(t, "./data/sample-xapp-2.2.0/inference-service-1.0.0.tgz")
+
+	defer os.RemoveAll("./data/sample-xapp-2.2.0/inference-service-1.0.0.tgz")
 }
 
 func TestCopyFile(t *testing.T) {
@@ -110,4 +128,13 @@ func TestCopyDirectory(t *testing.T) {
 			}
 		}
 	}
+}
+
+func TestValidateChartMaterials(t *testing.T) {
+	os.Setenv("CHART_WORKSPACE_PATH", ".")
+	chartBuilder := NewChartBuilder("data/sample_config.json", "data/sample_schema.json")
+	err := chartBuilder.ValidateChartMaterials()
+	defer os.RemoveAll(os.Getenv("CHART_WORKSPACE_PATH") + "/" + chartBuilder.chartName + "-" + chartBuilder.chartVersion)
+
+	assert.Nil(t, err)
 }
