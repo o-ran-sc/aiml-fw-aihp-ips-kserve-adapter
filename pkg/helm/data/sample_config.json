@@ -1,5 +1,5 @@
 {
-    "xapp_name": "sample-xapp",
+    "xapp_name": "sample_xapp",
     "xapp_type": "inferenceservice",
     "version": "2.2.0",
     "sa_name": "default",
