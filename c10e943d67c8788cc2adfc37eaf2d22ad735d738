@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7dc6d1a7_60b5bf5a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000279
+      },
+      "writtenOn": "2023-05-22T03:27:44Z",
+      "side": 1,
+      "message": "related to  : https://gerrit.o-ran-sc.org/r/c/aiml-fw/aihp/ips/kserve-adapter/+/11130?forceReload\u003dtrue",
+      "revId": "c10e943d67c8788cc2adfc37eaf2d22ad735d738",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    }
+  ]
+}
