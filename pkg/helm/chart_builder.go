@@ -29,6 +29,8 @@ import (
 
 	"github.com/xeipuuv/gojsonschema"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/logger"
+	"github.sec.samsung.net/RANIS/aiml-fw-aihp-ips-kserve-adapter/pkg/util"
+	"gopkg.in/yaml.v1"
 )
 
 const (
@@ -83,8 +85,15 @@ func NewChartBuilder(configFile string, schemaFile string) *ChartBuilder {
 	_, err = os.Stat(chartBuilder.chartWorkspacePath)
 	if err != nil {
 		if !os.IsNotExist(err) {
-			os.RemoveAll(chartBuilder.chartWorkspacePath)
+			logger.Logging(logger.ERROR, err.Error())
+			return nil
 		}
+	}
+
+	err = os.RemoveAll(chartBuilder.chartWorkspacePath)
+	if err != nil {
+		logger.Logging(logger.ERROR, err.Error())
+		return nil
 	}
 
 	err = os.Mkdir(chartBuilder.chartWorkspacePath, os.FileMode(0744))
@@ -196,7 +205,29 @@ func (c *ChartBuilder) copyDirectory(src string, dest string) (err error) {
 }
 
 func (c *ChartBuilder) PackageChart() (err error) {
-	return errors.New("not yet implemented")
+	err = c.appendConfigToValuesYaml()
+	if err != nil {
+		return
+	}
+
+	err = c.changeChartNameVersion()
+	if err != nil {
+		return
+	}
+
+	err = c.helmLint()
+	if err != nil {
+		return
+	}
+
+	output, err := util.HelmExec(fmt.Sprintf("package %s/%s -d %s", c.chartWorkspacePath, c.chartName, c.chartWorkspacePath))
+	if err != nil {
+		logger.Logging(logger.ERROR, "%s-%s helm lint failed (Caused by : %s)", c.chartName, c.chartVersion, err.Error())
+		return
+	}
+	logger.Logging(logger.INFO, "result of helm lint : %s", string(output))
+
+	return
 }
 
 func (c *ChartBuilder) parseConfigFile(configFile string) (config Config, err error) {
@@ -235,15 +266,65 @@ func (c *ChartBuilder) parseSchemaFile(schemaFile string) (schema Schema, err er
 }
 
 func (c *ChartBuilder) helmLint() (err error) {
-	return errors.New("not yet implemented")
+
+	output, err := util.HelmExec(fmt.Sprintf("lint %s/%s", c.chartWorkspacePath, c.chartName))
+
+	if err != nil {
+		logger.Logging(logger.ERROR, err.Error())
+		logger.Logging(logger.ERROR, fmt.Sprintf("%s-%s helm lint failed (Caused by : %s)", c.chartName, c.chartVersion, err))
+	}
+	logger.Logging(logger.INFO, fmt.Sprintf("result of helm lint : %s", string(output)))
+	return
 }
 
 func (c *ChartBuilder) appendConfigToValuesYaml() (err error) {
-	return errors.New("not yet implemented")
+	valueYamlPath := os.Getenv(ENV_CHART_WORKSPACE_PATH) + "/" + c.chartName + "-" + c.chartVersion + "/" + c.chartName + "/" + VALUES_YAML
+	yamlFile, err := ioutil.ReadFile(valueYamlPath)
+	if err != nil {
+		return
+	}
+
+	data := make(map[interface{}]interface{})
+	err = yaml.Unmarshal(yamlFile, &data)
+	if err != nil {
+		return
+	}
+
+	data["engine"] = c.config.InferenceService.Engine
+	data["storageUri"] = c.config.InferenceService.StorageURI
+
+	//data["resources"] = c.config.
+	data["max_replicas"] = c.config.InferenceService.MaxReplicas
+	data["min_replicas"] = c.config.InferenceService.MinReplicas
+	data["name"] = c.config.XappName
+	data["fullname"] = c.config.XappName
+	data["ric_serviceaccount_name"] = c.config.SaName
+
+	ret, err := yaml.Marshal(&data)
+	if err != nil {
+		return
+	}
+
+	err = ioutil.WriteFile(valueYamlPath, ret, os.FileMode(0644))
+	if err != nil {
+		return
+	}
+	return
 }
 
 func (c *ChartBuilder) changeChartNameVersion() (err error) {
-	return errors.New("not yet implemented")
+	chartYamlPath := os.Getenv(ENV_CHART_WORKSPACE_PATH) + "/" + c.chartName + "/" + CHART_YAML
+	yamlFile, err := ioutil.ReadFile(chartYamlPath)
+
+	data := make(map[interface{}]interface{})
+	err = yaml.Unmarshal(yamlFile, &data)
+	if err != nil {
+		return
+	}
+
+	data["version"] = c.chartVersion
+	data["name"] = c.chartName
+	return
 }
 
 func (c *ChartBuilder) ValidateChartMaterials() (err error) {

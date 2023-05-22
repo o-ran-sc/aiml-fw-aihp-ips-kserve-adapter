@@ -20,11 +20,15 @@ limitations under the License.
 package main
 
 import (
+	"flag"
 	"os"
 
+	"github.com/spf13/viper"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/api"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/logger"
 )
+
+const KSERVE_ADAPTER_CONFIG_FILE = "./config/kserve-adapter.yaml"
 
 var (
 	apiServerPort string
@@ -32,6 +36,11 @@ var (
 
 func init() {
 	apiServerPort = os.Getenv("API_SERVER_PORT")
+
+	var fileName *string
+	fileName = flag.String("f", KSERVE_ADAPTER_CONFIG_FILE, "Specify the configuration file.")
+	flag.Parse()
+	viper.SetConfigFile(*fileName)
 }
 
 func main() {
