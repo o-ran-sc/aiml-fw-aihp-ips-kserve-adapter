@@ -16,6 +16,24 @@
       "message": "So, now we will not manage go.sum. right?",
       "revId": "2c78ddb49b8303b83b34ef57b76661b75db5e689",
       "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "05e252c2_1ad1401c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001907
+      },
+      "writtenOn": "2023-05-23T03:16:06Z",
+      "side": 1,
+      "message": "Right. Instead, \u0027go mod tidy\u0027 is required everytime before build.",
+      "parentUuid": "f4ea209d_7d6de0fd",
+      "revId": "2c78ddb49b8303b83b34ef57b76661b75db5e689",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
     }
   ],
   "submitRequirementResults": [
