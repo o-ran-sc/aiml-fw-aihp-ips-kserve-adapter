@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "99f9e926_f6af5c97",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000279
+      },
+      "writtenOn": "2023-05-24T10:10:21Z",
+      "side": 1,
+      "message": "kservemock \"github.sec.samsung.net/RANIS/aiml-fw-aihp-ips-kserve-adapter/pkg/client/kserve/mock\"\n\tonboardmock \"github.sec.samsung.net/RANIS/aiml-fw-aihp-ips-kserve-adapter/pkg/client/onboard/mock\"\n\t\"github.sec.samsung.net/RANIS/aiml-fw-aihp-ips-kserve-adapter/pkg/commons/errors\"\n)\n\nPlease modify the URL",
+      "revId": "3909848bf3c51a074517d80c84c5c0e033e2a654",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    }
+  ]
+}
