@@ -16,6 +16,24 @@
       "message": "I think mockgen.sh is unecessary since \u0027make genmock\u0027 in Makefile can do samething.",
       "revId": "0d22a8799fedd001e37f6f6e12da60aa68a4eb7f",
       "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f621dc16_620f9c0c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000279
+      },
+      "writtenOn": "2023-05-25T10:51:27Z",
+      "side": 1,
+      "message": "Thank you! I deleted it",
+      "parentUuid": "1fdd0fb0_e2095436",
+      "revId": "0d22a8799fedd001e37f6f6e12da60aa68a4eb7f",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
     }
   ]
 }
