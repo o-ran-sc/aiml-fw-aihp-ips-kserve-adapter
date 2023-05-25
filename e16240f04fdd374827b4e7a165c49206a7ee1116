@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c2a3a082_57edf58a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000279
+      },
+      "writtenOn": "2023-05-25T01:04:55Z",
+      "side": 1,
+      "message": "pleace check my comment",
+      "revId": "e16240f04fdd374827b4e7a165c49206a7ee1116",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8c3cf1bc_9a4e3db2",
+        "filename": "pkg/api/rest_server.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1000279
+      },
+      "writtenOn": "2023-05-25T01:04:55Z",
+      "side": 1,
+      "message": "seems necessary to be modified the variable name from \u0027reivisionExecutor\u0027 to \u0027revisionExecutor\u0027 if not intended",
+      "revId": "e16240f04fdd374827b4e7a165c49206a7ee1116",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    }
+  ]
+}
