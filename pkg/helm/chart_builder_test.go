@@ -81,9 +81,10 @@ func TestPackageChart(t *testing.T) {
 
 	os.Setenv("CHART_WORKSPACE_PATH", "./data")
 	chartBuilder := NewChartBuilder("data/sample_config.json", "data/sample_schema.json")
-	err := chartBuilder.PackageChart()
+	chartPath, err := chartBuilder.PackageChart()
 
 	assert.Nil(t, err)
+	assert.Contains(t, chartPath, "data/sample-xapp-2.2.0/inference-service-1.0.0.tgz")
 	assert.FileExists(t, "./data/sample-xapp-2.2.0/inference-service-1.0.0.tgz")
 
 	defer os.RemoveAll("./data/sample-xapp-2.2.0/inference-service-1.0.0.tgz")
@@ -128,4 +129,11 @@ func TestCopyDirectory(t *testing.T) {
 			}
 		}
 	}
+}
+func TestValidateChartMaterials(t *testing.T) {
+	os.Setenv("CHART_WORKSPACE_PATH", ".")
+	chartBuilder := NewChartBuilder("data/sample_config.json", "data/sample_schema.json")
+	err := chartBuilder.ValidateChartMaterials()
+	defer os.RemoveAll(os.Getenv("CHART_WORKSPACE_PATH") + "/" + chartBuilder.chartName + "-" + chartBuilder.chartVersion)
+	assert.Nil(t, err)
 }
