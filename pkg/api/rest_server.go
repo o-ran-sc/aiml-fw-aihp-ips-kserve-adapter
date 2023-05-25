@@ -26,6 +26,7 @@ import (
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/api/v1/deployment"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/api/v1/healthcheck"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/api/v1/info"
+	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/api/v1/preparation"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/api/v1/revision"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/api/v1/status"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/logger"
@@ -37,6 +38,7 @@ var (
 	revisionExecutor    revision.Command
 	statusExecutor      status.Command
 	infoExecutor        info.Command
+	preparationExecutor preparation.Command
 )
 
 func init() {
@@ -45,6 +47,7 @@ func init() {
 	revisionExecutor = revision.Executor{}
 	statusExecutor = status.Executor{}
 	infoExecutor = info.Executor{}
+	preparationExecutor = preparation.Executor{}
 }
 
 func setupRouter() (router *gin.Engine) {
@@ -79,7 +82,11 @@ func setupRouter() (router *gin.Engine) {
 			info.GET("", infoExecutor.Get)
 		}
 
-		_, _, _, _ = healthcheck, revision, status, info
+		preparation := v1.Group(url.IPS() + url.Preparation())
+		{
+			preparation.POST("", preparationExecutor.Post)
+		}
+		_, _, _, _, _ = healthcheck, revision, status, info, preparation
 	}
 
 	return

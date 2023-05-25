@@ -45,3 +45,6 @@ func IPSName() string { return "/{name}" }
 
 // Version returns the version url as a type of string.
 func Version() string { return "/ver" }
+
+// Preparation returns the package url as s type of string.
+func Preparation() string { return "/preparation" }

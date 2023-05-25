@@ -25,6 +25,7 @@ type Config struct {
 	Version          string           `json:"version"`
 	SaName           string           `json:"sa_name"`
 	InferenceService InferenceService `json:"inferenceservice"`
+	configFile string
 }
 
 type InferenceService struct {

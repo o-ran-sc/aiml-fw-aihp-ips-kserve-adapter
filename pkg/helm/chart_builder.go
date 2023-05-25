@@ -46,7 +46,7 @@ const (
 )
 
 type HelmChartBuilder interface {
-	PackageChart() (err error)
+	PackageChart() (helmChartPath string, err error)
 }
 
 type ChartBuilder struct {
@@ -204,7 +204,7 @@ func (c *ChartBuilder) copyDirectory(src string, dest string) (err error) {
 	return
 }
 
-func (c *ChartBuilder) PackageChart() (err error) {
+func (c *ChartBuilder) PackageChart() (chartPath string, err error) {
 	err = c.appendConfigToValuesYaml()
 	if err != nil {
 		return
@@ -226,6 +226,8 @@ func (c *ChartBuilder) PackageChart() (err error) {
 		return
 	}
 	logger.Logging(logger.INFO, "result of helm lint : %s", string(output))
+	slice := strings.Split(string(output), " ")
+	chartPath = slice[len(slice)-1]
 
 	return
 }
@@ -313,7 +315,16 @@ func (c *ChartBuilder) appendConfigToValuesYaml() (err error) {
 }
 
 func (c *ChartBuilder) changeChartNameVersion() (err error) {
-	return errors.New("not yet implemented")
+	chartYamlPath := os.Getenv(ENV_CHART_WORKSPACE_PATH) + "/" + c.chartName + "/" + CHART_YAML
+	yamlFile, err := ioutil.ReadFile(chartYamlPath)
+	data := make(map[interface{}]interface{})
+	err = yaml.Unmarshal(yamlFile, &data)
+	if err != nil {
+		return
+	}
+	data["version"] = c.chartVersion
+	data["name"] = c.chartName
+	return
 }
 
 func (c *ChartBuilder) ValidateChartMaterials() (err error) {
