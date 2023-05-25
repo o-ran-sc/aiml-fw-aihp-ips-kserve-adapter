@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1fdd0fb0_e2095436",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001907
+      },
+      "writtenOn": "2023-05-25T09:56:01Z",
+      "side": 1,
+      "message": "I think mockgen.sh is unecessary since \u0027make genmock\u0027 in Makefile can do samething.",
+      "revId": "0d22a8799fedd001e37f6f6e12da60aa68a4eb7f",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    }
+  ]
+}
