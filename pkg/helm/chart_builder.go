@@ -26,10 +26,11 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 
-	"github.com/xeipuuv/gojsonschema"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/logger"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/util"
+	"github.com/xeipuuv/gojsonschema"
 	"gopkg.in/yaml.v1"
 )
 
