@@ -27,8 +27,6 @@ import (
 	"github.com/kserve/kserve/pkg/apis/serving/v1beta1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	kservemock "gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/client/kserve/mock"
-	onboardmock "gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/client/onboard/mock"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/errors"
 )
 
