@@ -26,10 +26,11 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 
-	"github.com/xeipuuv/gojsonschema"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/logger"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/util"
+	"github.com/xeipuuv/gojsonschema"
 	"gopkg.in/yaml.v1"
 )
 
@@ -82,6 +83,7 @@ func NewChartBuilder(configFile string, schemaFile string) *ChartBuilder {
 	chartBuilder.chartVersion = chartBuilder.config.Version
 	chartBuilder.chartWorkspacePath = os.Getenv(ENV_CHART_WORKSPACE_PATH) + "/" + chartBuilder.chartName + "-" + chartBuilder.chartVersion
 
+	logger.Logging(logger.INFO, "chartBuilder.chartWorkspacePath", chartBuilder.chartWorkspacePath)
 	_, err = os.Stat(chartBuilder.chartWorkspacePath)
 	if err != nil {
 		if !os.IsNotExist(err) {
@@ -109,7 +111,7 @@ func NewChartBuilder(configFile string, schemaFile string) *ChartBuilder {
 
 	apiVersion := chartBuilder.config.InferenceService.ApiVersion
 	resource := resourceVersionMap[apiVersion]
-	err = chartBuilder.copyDirectory("data/"+resource, chartBuilder.chartWorkspacePath+"/"+chartBuilder.chartName)
+	err = chartBuilder.copyDirectory(chartBuilder.chartWorkspacePath+"/../../data/"+resource, chartBuilder.chartWorkspacePath+"/"+chartBuilder.chartName)
 	if err != nil {
 		logger.Logging(logger.ERROR, err.Error())
 		return nil
