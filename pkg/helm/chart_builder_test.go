@@ -131,9 +131,9 @@ func TestCopyDirectory(t *testing.T) {
 	}
 }
 func TestValidateChartMaterials(t *testing.T) {
-	os.Setenv("CHART_WORKSPACE_PATH", ".")
+	os.Setenv("CHART_WORKSPACE_PATH", "./data")
 	chartBuilder := NewChartBuilder("data/sample_config.json", "data/sample_schema.json")
 	err := chartBuilder.ValidateChartMaterials()
-	defer os.RemoveAll(os.Getenv("CHART_WORKSPACE_PATH") + "/" + chartBuilder.chartName + "-" + chartBuilder.chartVersion)
+	defer os.RemoveAll(chartBuilder.chartWorkspacePath)
 	assert.Nil(t, err)
 }

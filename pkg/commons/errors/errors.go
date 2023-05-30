@@ -82,3 +82,19 @@ type InternalServerError struct {
 func (e InternalServerError) Error() string {
 	return "internal server error: " + e.Message
 }
+
+type InvalidConfigFile struct {
+	Message string `json:"message" example:"invalid config file: {reason}" format:"string"`
+}
+
+func (e InvalidConfigFile) Error() string {
+	return "invalid Config file: " + e.Message
+}
+
+type InvalidSchemaFile struct {
+	Message string `json:"message" example:"invalid schema file: {reason}" format:"string"`
+}
+
+func (e InvalidSchemaFile) Error() string {
+	return "invalid Schema file: " + e.Message
+}
