@@ -21,7 +21,7 @@ package info
 
 import (
 	"errors"
-	"go/types"
+
 	"net/http"
 	"net/http/httptest"
 	. "net/url"
@@ -31,7 +31,7 @@ import (
 	"github.com/golang/mock/gomock"
 
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/api/commons/url"
-
+	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/types"
 	controllermock "gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/controller/v1/adapter/mock"
 )
 
