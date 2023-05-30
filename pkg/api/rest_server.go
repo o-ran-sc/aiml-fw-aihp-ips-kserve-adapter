@@ -84,7 +84,7 @@ func setupRouter() (router *gin.Engine) {
 
 		preparation := v1.Group(url.IPS() + url.Preparation())
 		{
-			preparation.POST("", preparationExecutor.Post)
+			preparation.POST("", preparationExecutor.Preperation)
 		}
 		_, _, _, _, _ = healthcheck, revision, status, info, preparation
 	}

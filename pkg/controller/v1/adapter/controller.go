@@ -27,6 +27,7 @@ import (
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/errors"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/logger"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/types"
+	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/helm"
 )
 
 //go:generate mockgen -source=controller.go -destination=./mock/mock_controller.go -package=mock
@@ -37,6 +38,7 @@ type Command interface {
 	Revision(name string) (revisionList types.Revision, err error)
 	Status(name string) (types.Status, error)
 	Info(name string) (types.Info, error)
+	Preperation(configFile string, schemaFile string) (chartPath string, err error)
 }
 
 type Executor struct {
@@ -159,5 +161,19 @@ func (Executor) Info(name string) (result types.Info, err error) {
 	defer logger.Logging(logger.DEBUG, "OUT")
 
 	result, err = kserveClient.Info(name)
+	return
+}
+
+func (Executor) Preperation(configFile string, schemaFile string) (chartPath string, err error) {
+	logger.Logging(logger.DEBUG, "IN")
+	defer logger.Logging(logger.DEBUG, "OUT")
+
+	chartBuilder := helm.NewChartBuilder(configFile, schemaFile)
+	chartPath, err = chartBuilder.PackageChart()
+
+	if err != nil {
+		return
+	}
+
 	return
 }

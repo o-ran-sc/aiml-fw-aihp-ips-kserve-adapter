@@ -20,46 +20,49 @@ limitations under the License.
 package preparation
 
 import (
-	"encoding/json"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/api/commons/utils"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/errors"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/logger"
-	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/helm"
+	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/controller/v1/adapter"
+	"github.com/gin-gonic/gin"
 )
 
 type Command interface {
-	Post(c *gin.Context)
+	Preperation(c *gin.Context)
 }
 
 type Executor struct {
 	Command
 }
 
+var ipsAdapter adapter.Command
+
 func init() {
+	ipsAdapter = adapter.Executor{}
 }
 
-func (Executor) Post(c *gin.Context) {
+func (Executor) Preperation(c *gin.Context) {
 	logger.Logging(logger.DEBUG, "IN")
 	defer logger.Logging(logger.DEBUG, "OUT")
 
 	configFile := c.Query("configfile")
-	schemaFile := c.Query("schemafile")
-
-	chartBuilder := helm.NewChartBuilder(configFile, schemaFile)
-	chartPath, err := chartBuilder.PackageChart()
-
-	if err != nil {
-		utils.WriteError(c.Writer, errors.InternalServerError{Message: err.Error()})
+	if configFile == "" {
+		utils.WriteError(c.Writer, errors.InvalidConfigFile{Message: "Empty Query"})
 		return
 	}
 
-	data, err := json.Marshal(chartPath)
+	schemaFile := c.Query("schemafile")
+	if schemaFile == "" {
+		utils.WriteError(c.Writer, errors.InvalidSchemaFile{Message: "Empty Query"})
+		return
+	}
+
+	chartPath, err := ipsAdapter.Preperation(configFile, schemaFile)
 	if err != nil {
 		utils.WriteError(c.Writer, err)
 		return
 	}
-	utils.WriteSuccess(c.Writer, http.StatusAccepted, data)
+	utils.WriteSuccess(c.Writer, http.StatusCreated, []byte(chartPath))
 }
