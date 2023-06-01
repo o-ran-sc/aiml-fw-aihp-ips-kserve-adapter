@@ -59,10 +59,11 @@ func (Executor) Preperation(c *gin.Context) {
 		return
 	}
 
-	chartPath, err := ipsAdapter.Preperation(configFile, schemaFile)
+	_, err := ipsAdapter.Preperation(configFile, schemaFile)
 	if err != nil {
 		utils.WriteError(c.Writer, err)
 		return
 	}
-	utils.WriteSuccess(c.Writer, http.StatusCreated, []byte(chartPath))
+
+	utils.WriteSuccess(c.Writer, http.StatusCreated, nil)
 }

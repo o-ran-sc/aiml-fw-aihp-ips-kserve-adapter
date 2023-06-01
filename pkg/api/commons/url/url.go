@@ -22,9 +22,6 @@ package url
 // V1 returns the v1 url as a type of string.
 func V1() string { return "/v1" }
 
-// Onboard returns the onboard url as a type of string.
-func Onboard() string { return "/onboard/api/v1/charts" }
-
 // IPS returns the ips url as a type of string.
 func IPS() string { return "/ips" }
 
@@ -48,3 +45,9 @@ func Version() string { return "/ver" }
 
 // Preparation returns the package url as s type of string.
 func Preparation() string { return "/preparation" }
+
+// Download returns the chart download url as a type of string.
+func Download() string { return "/api/v1/charts/xApp/download/{xApp_name}/ver/{version}" }
+
+// Onboard returns the chart Onboard url as a type of string.
+func Onboard() string { return "/api/v1/custom-onboard" }
