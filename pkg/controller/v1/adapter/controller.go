@@ -23,7 +23,7 @@ import (
 	"os"
 
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/client/kserve"
-	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/client/onboard"
+	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/client/ricdms"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/errors"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/logger"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/types"
@@ -46,7 +46,7 @@ type Executor struct {
 }
 
 var kserveClient kserve.Command
-var onboardClient onboard.Command
+var ricdmsClient ricdms.Command
 
 var removeFunc func(string) error
 
@@ -59,7 +59,7 @@ func init() {
 		os.Exit(8)
 	}
 
-	onboardClient = onboard.Executor{}
+	ricdmsClient = ricdms.Executor{}
 
 	removeFunc = func(path string) (err error) {
 		err = os.RemoveAll(path)
@@ -71,7 +71,7 @@ func (Executor) Deploy(name string, version string) (revision string, err error)
 	logger.Logging(logger.DEBUG, "IN")
 	defer logger.Logging(logger.DEBUG, "OUT")
 
-	path, err := onboardClient.Download(name, version)
+	path, err := ricdmsClient.FetchHelmChartAndUntar(name, version)
 	if err != nil {
 		return
 	}
@@ -94,7 +94,7 @@ func (Executor) Delete(name string) (err error) {
 	logger.Logging(logger.DEBUG, "IN")
 	defer logger.Logging(logger.DEBUG, "OUT")
 
-	err = onboardClient.Get(name)
+	err = ricdmsClient.FetchHelmChart(name)
 	if err != nil {
 		err = errors.InvalidIPSName{
 			Message: err.Error(),
@@ -113,7 +113,7 @@ func (Executor) Update(name string, version string, canaryTrafficRatio string) (
 	logger.Logging(logger.DEBUG, "IN")
 	defer logger.Logging(logger.DEBUG, "OUT")
 
-	path, err := onboardClient.Download(name, version)
+	path, err := ricdmsClient.FetchHelmChartAndUntar(name, version)
 	if err != nil {
 		return
 	}
@@ -170,7 +170,12 @@ func (Executor) Preperation(configFile string, schemaFile string) (chartPath str
 
 	chartBuilder := helm.NewChartBuilder(configFile, schemaFile)
 	chartPath, err = chartBuilder.PackageChart()
+	if err != nil {
+		logger.Logging(logger.ERROR, err.Error())
+		return
+	}
 
+	ricdmsClient.OnboardHelmChart(chartPath)
 	if err != nil {
 		return
 	}

@@ -28,7 +28,7 @@ import (
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	kservemock "gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/client/kserve/mock"
-	onboardmock "gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/client/onboard/mock"
+	ricdmsmock "gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/client/ricdms/mock"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/errors"
 )
 
@@ -64,16 +64,16 @@ func TestNegativeCalledDepolyWithInvalidYAMLPath_ExpectReturnError(t *testing.T)
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	onboardMockobj := onboardmock.NewMockCommand(ctrl)
+	ricdmsmockobj := ricdmsmock.NewMockCommand(ctrl)
 
 	workspace, _ := os.Getwd()
 
 	gomock.InOrder(
-		onboardMockobj.EXPECT().Download(testName, testVersion).Return(workspace+invalidYAMLPath, nil),
+		ricdmsmockobj.EXPECT().FetchHelmChartAndUntar(testName, testVersion).Return(workspace+invalidYAMLPath, nil),
 	)
 
 	// pass mockObj to a real object.
-	onboardClient = onboardMockobj
+	ricdmsClient = ricdmsmockobj
 	removeFunc = fakeRemoveFunc
 
 	exec := Executor{}
@@ -88,16 +88,16 @@ func TestNegativeCalledDepolyWithInvalidPath_ExpectReturnError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	onboardMockobj := onboardmock.NewMockCommand(ctrl)
+	ricdmsmockobj := ricdmsmock.NewMockCommand(ctrl)
 
 	workspace, _ := os.Getwd()
 
 	gomock.InOrder(
-		onboardMockobj.EXPECT().Download(testName, testVersion).Return(workspace+invalidPath, nil),
+		ricdmsmockobj.EXPECT().FetchHelmChartAndUntar(testName, testVersion).Return(workspace+invalidPath, nil),
 	)
 
 	// pass mockObj to a real object.
-	onboardClient = onboardMockobj
+	ricdmsClient = ricdmsmockobj
 	removeFunc = fakeRemoveFunc
 
 	exec := Executor{}
@@ -113,18 +113,18 @@ func TestCalledDepoly_ExpectReturnSuccess(t *testing.T) {
 	defer ctrl.Finish()
 
 	kserveMockobj := kservemock.NewMockCommand(ctrl)
-	onboardMockobj := onboardmock.NewMockCommand(ctrl)
+	ricdmsmockobj := ricdmsmock.NewMockCommand(ctrl)
 
 	workspace, _ := os.Getwd()
 
 	gomock.InOrder(
-		onboardMockobj.EXPECT().Download(testName, testVersion).Return(workspace+samplePath, nil),
+		ricdmsmockobj.EXPECT().FetchHelmChartAndUntar(testName, testVersion).Return(workspace+samplePath, nil),
 		kserveMockobj.EXPECT().Create(gomock.Any()),
 	)
 
 	// pass mockObj to a real object.
 	kserveClient = kserveMockobj
-	onboardClient = onboardMockobj
+	ricdmsClient = ricdmsmockobj
 	removeFunc = fakeRemoveFunc
 
 	exec := Executor{}
@@ -136,14 +136,14 @@ func TestNegativeCalledDepoly_WhenOnboardClientReturnError_ExpectReturnError(t *
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	onboardMockobj := onboardmock.NewMockCommand(ctrl)
+	ricdmsmockobj := ricdmsmock.NewMockCommand(ctrl)
 
 	gomock.InOrder(
-		onboardMockobj.EXPECT().Download(testName, testVersion).Return("", errors.InternalServerError{}),
+		ricdmsmockobj.EXPECT().FetchHelmChartAndUntar(testName, testVersion).Return("", errors.InternalServerError{}),
 	)
 
 	// pass mockObj to a real object.
-	onboardClient = onboardMockobj
+	ricdmsClient = ricdmsmockobj
 	removeFunc = fakeRemoveFunc
 
 	exec := Executor{}
@@ -159,18 +159,18 @@ func TestNegativeCalledDepoly_WhenKServeClientReturnError_ExpectReturnError(t *t
 	defer ctrl.Finish()
 
 	kserveMockobj := kservemock.NewMockCommand(ctrl)
-	onboardMockobj := onboardmock.NewMockCommand(ctrl)
+	ricdmsmockobj := ricdmsmock.NewMockCommand(ctrl)
 
 	workspace, _ := os.Getwd()
 
 	gomock.InOrder(
-		onboardMockobj.EXPECT().Download(testName, testVersion).Return(workspace+samplePath, nil),
+		ricdmsmockobj.EXPECT().FetchHelmChartAndUntar(testName, testVersion).Return(workspace+samplePath, nil),
 		kserveMockobj.EXPECT().Create(gomock.Any()).Return("", errors.InternalServerError{}),
 	)
 
 	// pass mockObj to a real object.
 	kserveClient = kserveMockobj
-	onboardClient = onboardMockobj
+	ricdmsClient = ricdmsmockobj
 	removeFunc = fakeRemoveFunc
 
 	exec := Executor{}
@@ -186,16 +186,16 @@ func TestCalledDelete_ExpectReturnSuccess(t *testing.T) {
 	defer ctrl.Finish()
 
 	kserveMockobj := kservemock.NewMockCommand(ctrl)
-	onboardMockobj := onboardmock.NewMockCommand(ctrl)
+	ricdmsmockobj := ricdmsmock.NewMockCommand(ctrl)
 
 	gomock.InOrder(
-		onboardMockobj.EXPECT().Get(testName).Return(nil),
+		ricdmsmockobj.EXPECT().FetchHelmChart(testName).Return(nil),
 		kserveMockobj.EXPECT().Delete(testName).Return(nil),
 	)
 
 	// pass mockObj to a real object.
 	kserveClient = kserveMockobj
-	onboardClient = onboardMockobj
+	ricdmsClient = ricdmsmockobj
 	removeFunc = fakeRemoveFunc
 
 	exec := Executor{}
@@ -210,13 +210,13 @@ func TestNegativeCalledDelete_WhenOnboardClientReturnError_ExpectReturnError(t *
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	onboardMockobj := onboardmock.NewMockCommand(ctrl)
+	ricdmsmockobj := ricdmsmock.NewMockCommand(ctrl)
 
 	gomock.InOrder(
-		onboardMockobj.EXPECT().Get(testName).Return(errors.IOError{}),
+		ricdmsmockobj.EXPECT().FetchHelmChart(testName).Return(errors.IOError{}),
 	)
 
-	onboardClient = onboardMockobj
+	ricdmsClient = ricdmsmockobj
 	removeFunc = fakeRemoveFunc
 
 	exec := Executor{}
@@ -232,15 +232,15 @@ func TestNegativeCalledDelete_WhenKServeClientReturnError_ExpectReturnError(t *t
 	defer ctrl.Finish()
 
 	kserveMockobj := kservemock.NewMockCommand(ctrl)
-	onboardMockobj := onboardmock.NewMockCommand(ctrl)
+	ricdmsmockobj := ricdmsmock.NewMockCommand(ctrl)
 
 	gomock.InOrder(
-		onboardMockobj.EXPECT().Get(testName).Return(nil),
+		ricdmsmockobj.EXPECT().FetchHelmChart(testName).Return(nil),
 		kserveMockobj.EXPECT().Delete(testName).Return(errors.InternalServerError{}),
 	)
 
 	kserveClient = kserveMockobj
-	onboardClient = onboardMockobj
+	ricdmsClient = ricdmsmockobj
 	removeFunc = fakeRemoveFunc
 
 	exec := Executor{}
@@ -256,19 +256,19 @@ func TestCalledUpdate_ExpectReturnSuccess(t *testing.T) {
 	defer ctrl.Finish()
 
 	kserveMockobj := kservemock.NewMockCommand(ctrl)
-	onboardMockobj := onboardmock.NewMockCommand(ctrl)
+	ricdmsmockobj := ricdmsmock.NewMockCommand(ctrl)
 
 	workspace, _ := os.Getwd()
 
 	gomock.InOrder(
-		onboardMockobj.EXPECT().Download(testName, testVersion).Return(workspace+samplePath, nil),
+		ricdmsmockobj.EXPECT().FetchHelmChartAndUntar(testName, testVersion).Return(workspace+samplePath, nil),
 		kserveMockobj.EXPECT().Get(testName).Return(&sampleIFSV, nil),
 		kserveMockobj.EXPECT().Update(gomock.Any()),
 	)
 
 	// pass mockObj to a real object.
 	kserveClient = kserveMockobj
-	onboardClient = onboardMockobj
+	ricdmsClient = ricdmsmockobj
 	removeFunc = fakeRemoveFunc
 
 	exec := Executor{}
@@ -280,14 +280,14 @@ func TestNegativeCalledUpdate_WhenOnboardClientReturnError_ExpectReturnError(t *
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	onboardMockobj := onboardmock.NewMockCommand(ctrl)
+	ricdmsmockobj := ricdmsmock.NewMockCommand(ctrl)
 
 	gomock.InOrder(
-		onboardMockobj.EXPECT().Download(testName, testVersion).Return("", errors.InternalServerError{}),
+		ricdmsmockobj.EXPECT().FetchHelmChartAndUntar(testName, testVersion).Return("", errors.InternalServerError{}),
 	)
 
 	// pass mockObj to a real object.
-	onboardClient = onboardMockobj
+	ricdmsClient = ricdmsmockobj
 	removeFunc = fakeRemoveFunc
 
 	exec := Executor{}
@@ -303,19 +303,19 @@ func TestNegativeCalledUpdate_WhenKServeClientReturnError_ExpectReturnError(t *t
 	defer ctrl.Finish()
 
 	kserveMockobj := kservemock.NewMockCommand(ctrl)
-	onboardMockobj := onboardmock.NewMockCommand(ctrl)
+	ricdmsmockobj := ricdmsmock.NewMockCommand(ctrl)
 
 	workspace, _ := os.Getwd()
 
 	gomock.InOrder(
-		onboardMockobj.EXPECT().Download(testName, testVersion).Return(workspace+samplePath, nil),
+		ricdmsmockobj.EXPECT().FetchHelmChartAndUntar(testName, testVersion).Return(workspace+samplePath, nil),
 		kserveMockobj.EXPECT().Get(testName).Return(&sampleIFSV, nil),
 		kserveMockobj.EXPECT().Update(gomock.Any()).Return("", errors.InternalServerError{}),
 	)
 
 	// pass mockObj to a real object.
 	kserveClient = kserveMockobj
-	onboardClient = onboardMockobj
+	ricdmsClient = ricdmsmockobj
 	removeFunc = fakeRemoveFunc
 
 	exec := Executor{}

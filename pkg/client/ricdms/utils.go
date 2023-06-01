@@ -17,13 +17,15 @@ limitations under the License.
 ==================================================================================
 */
 
-package onboard
+package ricdms
 
 import (
 	"archive/tar"
+	"bytes"
 	"compress/gzip"
 	"io"
 	"math/rand"
+	"mime/multipart"
 	"net/http"
 	netUrl "net/url"
 	"os"
@@ -52,48 +54,45 @@ func init() {
 	randSrc = rand.NewSource(time.Now().UnixNano())
 }
 
-func fetchHelmPackageFromOnboard(url string) (path string, err error) {
-	logger.Logging(logger.DEBUG, "IN")
-	defer logger.Logging(logger.DEBUG, "OUT")
-
-	resp, err := requestToOnboard(url)
-	if err != nil {
-		return
-	}
-	defer resp.Body.Close()
-
-	path = generateRandPath(pathLength)
-
-	err = Untar(path, resp.Body)
-	if err != nil {
-		return
-	}
-	return
-}
-
-func buildURL(name string, version string) string {
+func buildURLforChartOnboard() string {
 	logger.Logging(logger.DEBUG, "IN")
 	defer logger.Logging(logger.DEBUG, "OUT")
 
 	targetURL := netUrl.URL{
 		Scheme: "http",
-		Host:   onboarderIP + ":" + onboarderPort,
+		Host:   ricdmsIP + ":" + ricdmsPort,
 		Path:   url.Onboard(),
-	}
-
-	if name != "" {
-		targetURL.Path += url.IPSName() + "/" + name
-
-		if version != "" {
-			targetURL.Path += url.Version() + "/" + version
-
-		}
 	}
 
 	return targetURL.String()
 }
 
-func requestToOnboard(url string) (*http.Response, error) {
+func buildURLforChartFetch(name string, version string) (string, error) {
+	logger.Logging(logger.DEBUG, "IN")
+	defer logger.Logging(logger.DEBUG, "OUT")
+
+	targetURL := netUrl.URL{
+		Scheme: "http",
+		Host:   ricdmsIP + ":" + ricdmsPort,
+		Path:   url.Download(),
+	}
+
+	if name != "" {
+		targetURL.Path = strings.Replace(targetURL.Path, "{xApp_name}", name, -1)
+	} else {
+		return "", errors.InternalServerError{Message: "ifsv name is not given"}
+	}
+
+	if version != "" {
+		targetURL.Path = strings.Replace(targetURL.Path, "{version}", version, -1)
+	} else {
+		return "", errors.InternalServerError{Message: "ifsv version is not given"}
+	}
+
+	return targetURL.String(), nil
+}
+
+func getChartFromRicdms(url string) (*http.Response, error) {
 	logger.Logging(logger.DEBUG, "IN")
 	defer logger.Logging(logger.DEBUG, "OUT")
 
@@ -105,7 +104,7 @@ func requestToOnboard(url string) (*http.Response, error) {
 
 	if resp.StatusCode != http.StatusOK {
 		err = errors.InternalServerError{
-			Message: "onboard return error, status code : " + strconv.Itoa(int(resp.StatusCode)),
+			Message: "ricdms return error, status code : " + strconv.Itoa(int(resp.StatusCode)),
 		}
 		logger.Logging(logger.ERROR, err.Error())
 		return nil, err
@@ -210,4 +209,42 @@ func generateRandPath(n int) string {
 	}
 
 	return sb.String()
+}
+
+func onboardChartToRicdms(targetURL string, chartPath string) (*http.Response, error) {
+	logger.Logging(logger.DEBUG, "IN")
+	defer logger.Logging(logger.DEBUG, "OUT")
+
+	chartFile, err := os.Open(chartPath)
+	if err != nil {
+		logger.Logging(logger.DEBUG, err.Error())
+	}
+	defer chartFile.Close()
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	fw, _ := writer.CreateFormFile("helmpkg", chartFile.Name())
+	io.Copy(fw, chartFile)
+	writer.Close()
+	req, err := http.NewRequest("POST", targetURL, body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Content-Type", writer.FormDataContentType())
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+
+	if err != nil {
+		return resp, errors.InternalServerError{Message: err.Error()}
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		err = errors.InternalServerError{
+			Message: "ricdms return error, status code : " + strconv.Itoa(int(resp.StatusCode)),
+		}
+		logger.Logging(logger.ERROR, err.Error())
+		return resp, err
+	}
+	return resp, err
 }

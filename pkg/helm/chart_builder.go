@@ -229,7 +229,7 @@ func (c *ChartBuilder) PackageChart() (chartPath string, err error) {
 	}
 	logger.Logging(logger.INFO, "result of helm lint : %s", string(output))
 	slice := strings.Split(string(output), " ")
-	chartPath = slice[len(slice)-1]
+	chartPath = strings.TrimSuffix(slice[len(slice)-1], "\n")
 
 	return
 }
