@@ -16,6 +16,23 @@
       "message": "kserve-adapter needs env vars:\nKUBECONFIG (for kserve client), \nAPI_SERVER_PORT (for kserve-adapter rest server), \nCHART_WORKSPACE_PATH (for helm chart builder), \nRIC_DMS_IP (for target ricdms), \nRIC_DMS_PORT (for target ricdms). \n\nIt can be run with example commands below.\n(This should be applied to the Dockerfile, but it can\u0027t because it is still in review.)\n\nKUBECONFIG\u003d~/.kube/config \\\nAPI_SERVER_PORT\u003d{API_SERVER_PORT_YOU_WANT} \\\nCHART_WORKSPACE_PATH\u003d\"{KSERVE_ADAPTER_WORKSPACE_ROOT}/pkg/helm/data\" \\\nRIC_DMS_IP\u003d{RIC_DMS_IP} \\\nRIC_DMS_PORT\u003d{RIC_DMS_PORT} \\\ngo run main.go",
       "revId": "02168ba4359f0d7b63c70e70e26539cf553c747e",
       "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d49c69e8_362ab2fa",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001949
+      },
+      "writtenOn": "2023-06-07T06:09:51Z",
+      "side": 1,
+      "message": "recheck",
+      "revId": "02168ba4359f0d7b63c70e70e26539cf553c747e",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
     }
   ]
 }
