@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "98c5610c_dfae04c6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001940
+      },
+      "writtenOn": "2023-06-07T04:53:59Z",
+      "side": 1,
+      "message": "Vanessa Valderrama commented:\n\nJess submitted a patch fixing the credential\nhttps://gerrit.o-ran-sc.org/r/c/ci-management/+/11275\n\nWe were still getting auth errors on 10002, reset the password again and the login is successful. There is a new failure.\nhttps://jenkins.o-ran-sc.org/view/aiml-fw-aihp-ips-kserve-adapter/job/aiml-fw-aihp-ips-kserve-adapter-docker-docker-merge-master/15/console\n\nYou\u0027ll need to add the file ./container-tag.yaml.\n\nThank you,\nVanessa",
+      "revId": "62ecee17f347a3edafcb0f55d75c8413fcc9b01c",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    }
+  ]
+}
