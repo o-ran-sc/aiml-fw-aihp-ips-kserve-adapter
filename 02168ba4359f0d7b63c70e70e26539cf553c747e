@@ -33,6 +33,23 @@
       "message": "recheck",
       "revId": "02168ba4359f0d7b63c70e70e26539cf553c747e",
       "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d5e0b57f_a9a57777",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001907
+      },
+      "writtenOn": "2023-06-09T08:10:49Z",
+      "side": 1,
+      "message": "To resolve merge conflict with rebasing, drop this commit and push a new one.",
+      "revId": "02168ba4359f0d7b63c70e70e26539cf553c747e",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
     }
   ]
 }
