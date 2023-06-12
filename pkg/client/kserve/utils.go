@@ -57,7 +57,6 @@ func convertValuesToInferenceService(values types.Values) (ifsv api_v1beta1.Infe
 			Name:      values.FullName,
 			Namespace: ips_namespace,
 			Labels: map[string]string{
-				"controller-tools.k8s.io": "1.0",
 				"app":                     values.FullName,
 			},
 		},
@@ -80,15 +79,9 @@ func convertValuesToInferenceService(values types.Values) (ifsv api_v1beta1.Infe
 		ifsv.Spec.Predictor.Tensorflow = &api_v1beta1.TFServingSpec{
 			PredictorExtensionSpec: api_v1beta1.PredictorExtensionSpec{
 				StorageURI: &values.StorageURI,
+				RuntimeVersion: &values.RuntimeVersion,
 				Container: core_v1.Container{
 					Image: values.Image,
-					Ports: []core_v1.ContainerPort{
-						{
-							Name:          "h2c",
-							ContainerPort: 9000,
-							Protocol:      "TCP",
-						},
-					},
 				},
 			},
 		}
@@ -98,13 +91,6 @@ func convertValuesToInferenceService(values types.Values) (ifsv api_v1beta1.Infe
 				StorageURI: &values.StorageURI,
 				Container: core_v1.Container{
 					Image: values.Image,
-					Ports: []core_v1.ContainerPort{
-						{
-							Name:          "h2c",
-							ContainerPort: 9000,
-							Protocol:      "TCP",
-						},
-					},
 				},
 			},
 		}

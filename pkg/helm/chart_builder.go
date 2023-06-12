@@ -296,6 +296,7 @@ func (c *ChartBuilder) appendConfigToValuesYaml() (err error) {
 
 	data["engine"] = c.config.InferenceService.Engine
 	data["storageUri"] = c.config.InferenceService.StorageURI
+	data["runtimeVersion"] = c.config.InferenceService.RuntimeVersion
 
 	//data["resources"] = c.config.
 	data["max_replicas"] = c.config.InferenceService.MaxReplicas

@@ -30,6 +30,7 @@ type Values struct {
 	Resources             string `yaml:"resources"`
 	RICServiceAccountName string `yaml:"ric_serviceaccount_name"`
 	StorageURI            string `yaml:"storageUri"`
+	RuntimeVersion	      string `yaml:"runtimeVersion"`
 	Image                 string `yaml:"image"`
 	ResourceVersion       string
 	CanaryTrafficPercent  int64

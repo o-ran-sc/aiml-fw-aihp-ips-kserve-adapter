@@ -5,7 +5,8 @@
     "sa_name": "default",
     "inferenceservice": {
         "engine": "tensorflow",
-        "storage_uri": "s3://mlpipeline/artifacts/sample-rl-pipeline-bbzh4/sample-rl-pipeline-bbzh4-949264085/sample-training-saved-model.tgz",
+        "storage_uri": "<Model URL>",
+        "runtime_version": "2.5.1",
         "api_version": "serving.kubeflow.org/v1beta1",
         "min_replicas": 1,
         "max_replicas": 1

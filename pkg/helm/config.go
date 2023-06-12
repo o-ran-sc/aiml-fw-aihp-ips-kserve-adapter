@@ -29,9 +29,10 @@ type Config struct {
 }
 
 type InferenceService struct {
-	Engine      string `json:"engine"`
-	StorageURI  string `json:"storage_uri"`
-	ApiVersion  string `json:"api_version"`
-	MinReplicas int32  `json:"min_replicas"`
-	MaxReplicas int32  `json:"max_replicas"`
+	Engine      	string `json:"engine"`
+	StorageURI 	string `json:"storage_uri"`
+	RuntimeVersion  string `json:"runtime_version"`
+	ApiVersion  	string `json:"api_version"`
+	MinReplicas 	int32  `json:"min_replicas"`
+	MaxReplicas 	int32  `json:"max_replicas"`
 }

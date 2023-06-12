@@ -19,6 +19,7 @@
         "required": [
           "engine",
           "storage_uri",
+          "runtime_version",
           "api_version",
           "min_replicas",
           "max_replicas"
@@ -40,6 +41,15 @@
             "default": "",
             "examples": [
                 "s3://mlpipeline/artifacts/sample-rl-pipeline-bbzh4/sample-rl-pipeline-bbzh4-949264085/sample-training-saved-model.tgz"
+            ]
+          },
+          "runtime_version": {
+            "$id": "#/properties/inferenceservice/properties/runtime_version",
+            "type": "string",
+            "title": "The runtime version Schema",
+            "default": "",
+            "examples": [
+                "2.5.1"
             ]
           },
           "api_version": {

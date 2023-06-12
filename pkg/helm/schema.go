@@ -46,11 +46,12 @@ type InferenceServiceSchema struct {
 }
 
 type InferenceServiceProperty struct {
-	Engine      StringProperty  `json:"engine"`
-	StorageURI  StringProperty  `json:"storage_uri"`
-	ApiVersion  StringProperty  `json:"api_version"`
-	MinReplicas IntegerProperty `json:"min_replicas"`
-	MaxReplicas IntegerProperty `json:"max_replicas"`
+	Engine      	StringProperty  `json:"engine"`
+	StorageURI  	StringProperty  `json:"storage_uri"`
+	RuntimeVersion	StringProperty  `json:"runtime_version"`
+	ApiVersion  	StringProperty  `json:"api_version"`
+	MinReplicas 	IntegerProperty `json:"min_replicas"`
+	MaxReplicas 	IntegerProperty `json:"max_replicas"`
 }
 
 type StringProperty struct {
