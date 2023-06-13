@@ -51,6 +51,24 @@
       "parentUuid": "9a91235c_883fd38c",
       "revId": "75ae75deeb380c07ad9d850e4d937de5762eacd7",
       "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2a85b281_eb469b63",
+        "filename": "pkg/helm/data/sample_config.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1001907
+      },
+      "writtenOn": "2023-06-13T07:07:01Z",
+      "side": 1,
+      "message": "Oh, I see. It would be nice to be included later in README or something.",
+      "parentUuid": "8a111971_6e28140e",
+      "revId": "75ae75deeb380c07ad9d850e4d937de5762eacd7",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
     }
   ]
 }
