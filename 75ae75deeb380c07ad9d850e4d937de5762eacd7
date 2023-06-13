@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "87a69a52_83fcb941",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001907
+      },
+      "writtenOn": "2023-06-13T00:57:05Z",
+      "side": 1,
+      "message": "Thanks for your work! I left a single question.",
+      "revId": "75ae75deeb380c07ad9d850e4d937de5762eacd7",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9a91235c_883fd38c",
+        "filename": "pkg/helm/data/sample_config.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1001907
+      },
+      "writtenOn": "2023-06-13T00:57:05Z",
+      "side": 1,
+      "message": "Is this value \u003cModel URL\u003e parsable? sorry I\u0027m not familiar with json.",
+      "revId": "75ae75deeb380c07ad9d850e4d937de5762eacd7",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    }
+  ]
+}
