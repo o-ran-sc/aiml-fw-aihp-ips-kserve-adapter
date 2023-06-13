@@ -1,0 +1,8 @@
+Verified+1: ORAN Jobbuilder <releng+oran-jobbuilder@linuxfoundation.org>
+Verified+1: Youhwan Seol <yh.seol@samsung.com>
+Code-Review+2: Youhwan Seol <yh.seol@samsung.com>
+Submitted-by: Youhwan Seol <yh.seol@samsung.com>
+Submitted-at: Tue, 13 Jun 2023 07:07:16 +0000
+Reviewed-on: https://gerrit.o-ran-sc.org/r/c/aiml-fw/aihp/ips/kserve-adapter/+/11323
+Project: aiml-fw/aihp/ips/kserve-adapter
+Branch: refs/heads/master
