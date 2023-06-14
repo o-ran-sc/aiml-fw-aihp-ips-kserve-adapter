@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d4100e0c_5d4d69f9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001907
+      },
+      "writtenOn": "2023-06-14T08:30:03Z",
+      "side": 1,
+      "message": "Such a good docs and demo guide.\ngive a minor comment.",
+      "revId": "5e752d71486cd686669c99c347ffbc097d261d0c",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "da782404_1439b294",
+        "filename": "docs/user-guide.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1001907
+      },
+      "writtenOn": "2023-06-14T08:30:03Z",
+      "side": 1,
+      "message": "This warning (or guide) message is duplicate. I think it\u0027s okay to left first one only. By the first one, readers might be guided enough and aware what do have to do. Even not, they can find what they are doing wrong.",
+      "range": {
+        "startLine": 70,
+        "startChar": 3,
+        "endLine": 72,
+        "endChar": 25
+      },
+      "revId": "5e752d71486cd686669c99c347ffbc097d261d0c",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    }
+  ]
+}
