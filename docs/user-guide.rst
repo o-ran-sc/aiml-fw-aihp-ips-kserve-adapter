@@ -13,54 +13,137 @@ User-Guide
 
 Overview
 --------
-- Kserve Adapter works with the AIML Framework and is used to deploy, delete and update kserve-based apps.
+Kserve Adapter works with the AIML Framework and is used to deploy, delete and update AI/ML models on Kserve.
 
-Build Image
------------
-Use the `docker build` command for docker image build.
 
-.. code-block:: none
+Steps to build and run
+-------------------------
 
-    kserve-adapter $ docker build -f Dockerfile .
+Prerequisites
 
-    Sending build context to Docker daemon  93.74MB
-    Step 1/11 : FROM golang:1.19.8-bullseye as builder
-    ---> b47c7dfaaa93
-    Step 2/11 : WORKDIR /kserve-adapter
-    ---> Using cache
-    ---> 6b397a834cc2
-    Step 3/11 : COPY . .
-    ---> Using cache
-    ---> 6a155a20fbde
-    Step 4/11 : ENV GO111MODULE=on GOOS=linux GOARCH=amd64
-    ---> Using cache
-    ---> f5be56bd7555
-    Step 5/11 : RUN go mod download
-    ---> Using cache
-    ---> 97862b975561
-    Step 6/11 : RUN go build -o kserve-adapter main.go
-    ---> Using cache
-    ---> 52a6ce04c444
-    Step 7/11 : FROM golang:1.19.8-bullseye
-    ---> b47c7dfaaa93
-    Step 8/11 : WORKDIR /root/
-    ---> Using cache
-    ---> c7870d2fbeba
-    Step 9/11 : COPY --from=builder /kserve-adapter/kserve-adapter .
-    ---> Using cache
-    ---> 4a2f88d946d6
-    Step 10/11 : EXPOSE 48099
-    ---> Using cache
-    ---> 8fbc694241e8
-    Step 11/11 : ENTRYPOINT ["./kserve-adapter"]
-    ---> Using cache
-    ---> d279266b588c
-    Successfully built d279266b588c
+#. Install go
+#. Install make
 
-Environments of Kserver Adapter
----------------------------------------
-+-----------------+---------------------------------+
-| KUBE_CONFIG     | ex) ~/.kube/config              | 
-+-----------------+---------------------------------+
-| API_SERVER_PORT | ex) "48099"                     |
-+-----------------+---------------------------------+
+
+Steps
+
+.. code:: bash
+
+        git clone "https://gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter"
+        cd kserve-adapter
+
+| Update ENV variables in Makefile under run section.
+| Update :file:`pkg/helm/data/sample_config.json` with model url. This can be obtained from AIMFW dashboard(Training Jobs-> Training Job status -> Select Info for a training job -> Model URL)
+| Execute below commands
+        
+.. code:: bash
+
+        make build
+        make run
+
+Demo steps
+----------
+
+Prerequisites
+
+#. Install chart museum
+#. Build ricdms binary
+
+
+Steps for the demo
+
+#. Run ric dms
+   
+   .. code:: bash
+
+        export RIC_DMS_CONFIG_FILE=$(pwd)/config/config-test.yaml
+        ./ricdms
+
+#. Run kserve adapter
+
+   Create namespace called ricips
+
+   .. code:: bash
+
+        kubectl create ns ricips
+
+|  Update ENV variables in Makefile under run section.
+|  Update :file: `pkg/helm/data/sample_config.json` with model url. This can be obtained from AIMFW dashboard(Training Jobs-> Training Job status -> Select Info for a training job -> Model URL)
+|  Execute below commands
+
+   .. code:: bash
+
+        make build
+        make run
+
+#. Generating and upload helm package
+
+   .. code:: bash
+
+        curl --request POST --url 'http://127.0.0.1:10000/v1/ips/preparation?configfile=pkg/helm/data/sample_config.json&schemafile=pkg/helm/data/sample_schema.json'
+
+#. Check uploaded charts
+
+   .. code:: bash
+
+        curl http://127.0.0.1:8080/api/charts
+
+#. Deploying the model
+
+   .. code:: bash
+
+        curl --request POST --url 'http://127.0.0.1:10000/v1/ips?name=inference-service&version=1.0.0'
+
+#. Check deployed Inference service
+
+   .. code:: bash
+
+        kubectl get InferenceService -n ricips
+
+#. Perform predictions
+
+   Use below command to obtain Ingress port for Kserve.
+
+   .. code:: bash
+
+        kubectl get svc istio-ingressgateway -n istio-system
+
+  
+   Obtain nodeport corresponding to port 80.
+   In the below example, the port is 31206.
+
+   .. code:: bash
+
+           NAME                   TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)                                                                      AGE
+           istio-ingressgateway   LoadBalancer   10.105.222.242   <pending>     15021:31423/TCP,80:31206/TCP,443:32145/TCP,31400:32338/TCP,15443:31846/TCP   4h15m
+   
+   
+  Create file predict_inference.sh with below contents:
+
+   .. code:: bash
+
+        model_name=sample-xapp
+        curl -v -H "Host: $model_name.ricips.example.com" http://<VM IP>:<Ingress port for Kserve>/v1/models/$model_name:predict -d @./input_qoe.json
+
+  Update the VM IP and the Ingress port for Kserve above. 
+
+  Create file input_qoe.json with below contents:
+
+   .. code:: bash
+
+        {"signature_name": "serving_default", "instances": [[[2.56, 2.56],
+                [2.56, 2.56],
+                [2.56, 2.56],
+                [2.56, 2.56],
+                [2.56, 2.56],
+                [2.56, 2.56],
+                [2.56, 2.56],
+                [2.56, 2.56],
+                [2.56, 2.56],
+                [2.56, 2.56]]]}
+
+  Use command below to trigger predictions
+
+  .. code:: bash
+
+        source predict_inference.sh

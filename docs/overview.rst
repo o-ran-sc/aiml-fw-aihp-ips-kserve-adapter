@@ -6,3 +6,4 @@
 Kserve Adapter Overview
 =======================
 
+Kserve Adapter works with the AIML Framework and is used to deploy, delete and update AI/ML models on Kserve.
