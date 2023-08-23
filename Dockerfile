@@ -26,7 +26,7 @@ COPY . .
 
 RUN go install github.com/golang/mock/mockgen@v1.6.0 && go generate ./...
 RUN go mod tidy
-RUN go build -o kserve-adapter main.go
+RUN go build -o kserve-adapter cmd/kserve-adapter/main.go
 
 FROM golang:1.19.8-bullseye
 

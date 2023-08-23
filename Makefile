@@ -17,8 +17,7 @@
 # ==================================================================================
 
 build:
-	go get .
-	go build -o kserve-adapter main.go
+	go build -o kserve-adapter cmd/kserve-adapter/main.go
 run:
 	KUBECONFIG=~/.kube/config \
         API_SERVER_PORT=10000 \
