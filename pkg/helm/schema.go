@@ -27,7 +27,7 @@ type Schema struct {
 	Title       string      `json:"title"`
 	Required    []string    `json:"required"`
 	Properties  Properties  `json:"properties"`
-	schemaFile string
+	schemaFile  string
 }
 
 type Definitions struct {
@@ -46,12 +46,12 @@ type InferenceServiceSchema struct {
 }
 
 type InferenceServiceProperty struct {
-	Engine      	StringProperty  `json:"engine"`
-	StorageURI  	StringProperty  `json:"storage_uri"`
-	RuntimeVersion	StringProperty  `json:"runtime_version"`
-	ApiVersion  	StringProperty  `json:"api_version"`
-	MinReplicas 	IntegerProperty `json:"min_replicas"`
-	MaxReplicas 	IntegerProperty `json:"max_replicas"`
+	Engine         StringProperty  `json:"engine"`
+	StorageURI     StringProperty  `json:"storage_uri"`
+	RuntimeVersion StringProperty  `json:"runtime_version"`
+	ApiVersion     StringProperty  `json:"api_version"`
+	MinReplicas    IntegerProperty `json:"min_replicas"`
+	MaxReplicas    IntegerProperty `json:"max_replicas"`
 }
 
 type StringProperty struct {

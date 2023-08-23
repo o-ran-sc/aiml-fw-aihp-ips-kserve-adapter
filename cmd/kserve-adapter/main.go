@@ -23,9 +23,9 @@ import (
 	"flag"
 	"os"
 
-	"github.com/spf13/viper"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/api"
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/logger"
+	"github.com/spf13/viper"
 )
 
 const KSERVE_ADAPTER_CONFIG_FILE = "./config/kserve-adapter.yaml"

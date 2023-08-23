@@ -57,7 +57,7 @@ func convertValuesToInferenceService(values types.Values) (ifsv api_v1beta1.Infe
 			Name:      values.FullName,
 			Namespace: ips_namespace,
 			Labels: map[string]string{
-				"app":                     values.FullName,
+				"app": values.FullName,
 			},
 		},
 		Spec: api_v1beta1.InferenceServiceSpec{
@@ -78,7 +78,7 @@ func convertValuesToInferenceService(values types.Values) (ifsv api_v1beta1.Infe
 	case "tensorflow":
 		ifsv.Spec.Predictor.Tensorflow = &api_v1beta1.TFServingSpec{
 			PredictorExtensionSpec: api_v1beta1.PredictorExtensionSpec{
-				StorageURI: &values.StorageURI,
+				StorageURI:     &values.StorageURI,
 				RuntimeVersion: &values.RuntimeVersion,
 				Container: core_v1.Container{
 					Image: values.Image,
