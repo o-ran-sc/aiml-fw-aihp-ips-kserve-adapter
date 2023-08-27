@@ -16,6 +16,24 @@
       "message": "If this is removed, the make build step fails mentioning dependent modules are not there. If it was download earlier it will not show error. But if we try on a new VM for first time, then it will fail. Since the path for source code has changed, we can add go get ./cmd/kserve-adapter",
       "revId": "5e752d71486cd686669c99c347ffbc097d261d0c",
       "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9d20651a_392bd38e",
+        "filename": "Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1002137
+      },
+      "writtenOn": "2023-08-27T23:33:00Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "3b7384d1_7f873997",
+      "revId": "5e752d71486cd686669c99c347ffbc097d261d0c",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
     }
   ]
 }
