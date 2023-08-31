@@ -20,11 +20,11 @@ build:
 	go get ./cmd/kserve-adapter
 	go build -o kserve-adapter cmd/kserve-adapter/main.go
 run:
-	KUBECONFIG=~/.kube/config \
-        API_SERVER_PORT=10000 \
-        CHART_WORKSPACE_PATH="$(shell pwd)/pkg/helm/data" \
-        RIC_DMS_IP=127.0.0.1 \
-        RIC_DMS_PORT=8000 \
+	KUBEURL=https://127.0.0.1:6443 \
+	API_SERVER_PORT=10000 \
+	CHART_WORKSPACE_PATH="$(shell pwd)/pkg/helm/data" \
+	RIC_DMS_IP=127.0.0.1 \
+	RIC_DMS_PORT=8000 \
 	./kserve-adapter
 genmock:
 	go generate ./...

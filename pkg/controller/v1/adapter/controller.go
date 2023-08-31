@@ -53,8 +53,9 @@ var removeFunc func(string) error
 func init() {
 	kserveClient = &kserve.Client{}
 
+	kubeUrl := os.Getenv("KUBEURL")
 	kubeconfigPath := os.Getenv("KUBECONFIG")
-	err := kserveClient.Init(kubeconfigPath)
+	err := kserveClient.Init(kubeUrl, kubeconfigPath)
 	if err != nil {
 		os.Exit(8)
 	}

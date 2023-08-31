@@ -35,11 +35,11 @@ const (
 	ips_namespace = "ricips"
 )
 
-var ifsvGetter func(string) (client_v1beta1.InferenceServiceInterface, error)
+var ifsvGetter func(string, string) (client_v1beta1.InferenceServiceInterface, error)
 
 //go:generate mockgen -source=client.go -destination=./mock/mock_client.go -package=mock
 type Command interface {
-	Init(kubeconfigPath string) error
+	Init(kubeUrl string, kubeconfigPath string) error
 	Create(values types.Values) (string, error)
 	Delete(name string) error
 	Get(name string) (*api_v1beta1.InferenceService, error)
@@ -63,8 +63,8 @@ func init() {
 	ifsvGetter = inferenceServiceGetter
 }
 
-func inferenceServiceGetter(path string) (api client_v1beta1.InferenceServiceInterface, err error) {
-	config, err := clientcmd.BuildConfigFromFlags("", path)
+func inferenceServiceGetter(kubeUrl string, kubeconfigPath string) (api client_v1beta1.InferenceServiceInterface, err error) {
+	config, err := clientcmd.BuildConfigFromFlags(kubeUrl, kubeconfigPath)
 	if err != nil {
 		logger.Logging(logger.ERROR, err.Error())
 		return
@@ -81,11 +81,11 @@ func inferenceServiceGetter(path string) (api client_v1beta1.InferenceServiceInt
 	return
 }
 
-func (c *Client) Init(kubeconfigPath string) (err error) {
+func (c *Client) Init(kubeUrl string, kubeconfigPath string) (err error) {
 	logger.Logging(logger.DEBUG, "IN")
 	defer logger.Logging(logger.DEBUG, "OUT")
 
-	c.api, err = ifsvGetter(kubeconfigPath)
+	c.api, err = ifsvGetter(kubeUrl, kubeconfigPath)
 	if err != nil {
 		err = errors.InternalServerError{Message: err.Error()}
 		return
