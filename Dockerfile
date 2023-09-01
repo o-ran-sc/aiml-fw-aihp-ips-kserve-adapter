@@ -32,16 +32,20 @@ FROM golang:1.19.8-bullseye
 
 WORKDIR /root/
 
+RUN curl https://baltocdn.com/helm/signing.asc | apt-key add -
+RUN apt-get install apt-transport-https --yes
+RUN echo "deb https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list
+
+RUN apt-get update
+RUN apt-get install helm
+
 COPY --from=builder /kserve-adapter/kserve-adapter .
+COPY --from=builder /kserve-adapter/pkg/helm/data pkg/helm/data
 
-EXPOSE 48099
+ENV API_SERVER_PORT=10000
+ENV CHART_WORKSPACE_PATH="/root/pkg/helm/data"
+EXPOSE 10000
 
-ENV KUBECONFIG=/home/.kube/config \
-    API_SERVER_PORT=48099 \
-    CHART_WORKSPACE_PATH="/kserve-adapter/pkg/helm/data" \
-    RIC_DMS_IP=127.0.0.1 \
-    RIC_DMS_PORT=8000
-    
 ENTRYPOINT ["./kserve-adapter"]
 
 
