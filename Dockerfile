@@ -34,14 +34,9 @@ WORKDIR /root/
 
 COPY --from=builder /kserve-adapter/kserve-adapter .
 
+ENV API_SERVER_PORT=48099
 EXPOSE 48099
 
-ENV KUBECONFIG=/home/.kube/config \
-    API_SERVER_PORT=48099 \
-    CHART_WORKSPACE_PATH="/kserve-adapter/pkg/helm/data" \
-    RIC_DMS_IP=127.0.0.1 \
-    RIC_DMS_PORT=8000
-    
 ENTRYPOINT ["./kserve-adapter"]
 
 

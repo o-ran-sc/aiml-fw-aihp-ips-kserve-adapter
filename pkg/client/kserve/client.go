@@ -24,6 +24,7 @@ import (
 	"github.com/kserve/kserve/pkg/client/clientset/versioned"
 	client_v1beta1 "github.com/kserve/kserve/pkg/client/clientset/versioned/typed/serving/v1beta1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 
 	"gerrit.o-ran-sc.org/r/aiml-fw/aihp/ips/kserve-adapter/pkg/commons/errors"
@@ -64,7 +65,14 @@ func init() {
 }
 
 func inferenceServiceGetter(path string) (api client_v1beta1.InferenceServiceInterface, err error) {
-	config, err := clientcmd.BuildConfigFromFlags("", path)
+	var config *rest.Config
+	if len(path) > 0 {
+		logger.Logging(logger.DEBUG, "outofcluster")
+		config, err = clientcmd.BuildConfigFromFlags("", path)
+	} else {
+		logger.Logging(logger.DEBUG, "incluster")
+		config, err = rest.InClusterConfig()
+	}
 	if err != nil {
 		logger.Logging(logger.ERROR, err.Error())
 		return
