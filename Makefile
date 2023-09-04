@@ -31,3 +31,11 @@ genmock:
 fmt:
 	go fmt ./cmd/...
 	go fmt ./pkg/...
+test:
+	mockgen -source=pkg/client/ricdms/client.go -destination=pkg/client/ricdms/mock/mock_client.go -package=mock
+	mockgen -source=pkg/api/v1/deployment/deployment.go -destination=pkg/api/v1/deployment/mock/mock_deployment.go -package=mock
+	mockgen -source=pkg/controller/v1/adapter/controller.go -destination=pkg/controller/v1/adapter/mock/mock_controller.go -package=mock
+	mockgen -source=pkg/client/kserve/client.go -destination=pkg/client/kserve/mock/mock_client.go -package=mock
+
+	KUBECONFIG=~/.kube/config \
+	go test ./pkg/...
