@@ -16,8 +16,8 @@ Overview
 Kserve Adapter works with the AIML Framework and is used to deploy, delete and update AI/ML models on Kserve.
 
 
-Steps to build and run
--------------------------
+Steps to build and run kserve adapter
+-------------------------------------
 
 Prerequisites
 
@@ -40,6 +40,12 @@ Steps
 
         make build
         make run
+
+
+Steps to run kserve adapter using AIMLFW deployment scripts
+-----------------------------------------------------------
+
+Follow the steps in this link: `AIMLFW installation guide <https://docs.o-ran-sc.org/projects/o-ran-sc-aiml-fw-aimlfw-dep/en/latest/installation-guide.html>`__
 
 Demo steps
 ----------
@@ -147,3 +153,4 @@ Steps for the demo
   .. code:: bash
 
         source predict_inference.sh
+

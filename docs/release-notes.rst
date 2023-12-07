@@ -3,6 +3,7 @@
 
 .. Copyright (c) 2023 Samsung Electronics Co., Ltd. All Rights Reserved.
 
+=============
 Release-Notes
 =============
 This document provides the release notes for the H release of Kserve adapter
@@ -12,7 +13,7 @@ This document provides the release notes for the H release of Kserve adapter
    :local:
 
 Version history
----------------
+===============
 
 +--------------------+--------------------+--------------------+--------------------+
 | **Date**           | **Ver.**           | **Author**         | **Comment**        |
@@ -21,16 +22,43 @@ Version history
 | 2023-06-14         | 1.0.0              |                    | H release          |
 |                    |                    |                    |                    |
 +--------------------+--------------------+--------------------+--------------------+
+| 2023-12-14         | 1.1.0              |                    | I release          |
+|                    |                    |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
 
 
 Summary
--------
+=======
 
-The H release of AIMLFW Kserve Adapter provides basic version of Kserve adapter
+The I release of AIMLFW Kserve Adapter provides basic version of Kserve adapter
 
 
 Release Data
-------------
+============
+
+I Release
+---------
+
++--------------------------------------+-------------------------------------------------------+
+| **Project**                          | AIMLFW Kserve Adapter                                 |
+|                                      |                                                       |
++--------------------------------------+-------------------------------------------------------+
+| **Repo/commit-ID**                   | aiml-fw/aihp/ips/kserve-adapter                       |
+|                                      |                                                       |
++--------------------------------------+-------------------------------------------------------+
+| **Release designation**              | I release                                             |
+|                                      |                                                       |
++--------------------------------------+-------------------------------------------------------+
+| **Release date**                     | 2023-12-29                                            |
+|                                      |                                                       |
++--------------------------------------+-------------------------------------------------------+
+| **Purpose of the delivery**          | Deploy Kserve adapter using AIMLFW deployment scripts |
+|                                      |                                                       |
++--------------------------------------+-------------------------------------------------------+
+
+
+H Release
+---------
 
 +--------------------------------------+--------------------------------------+
 | **Project**                          | AIMLFW Kserve Adapter                |
