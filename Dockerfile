@@ -15,37 +15,36 @@
 # limitations under the License.
 #==================================================================================
 
-
-FROM golang:1.19.8-bullseye as builder
+FROM golang:1.19.8-bullseye AS builder
 
 WORKDIR /kserve-adapter
-
-ENV GO111MODULE=on GOOS=linux GOARCH=amd64
+ENV GO111MODULE=on \
+    GOOS=linux \
+    GOARCH=amd64
 
 COPY . .
+RUN go install github.com/golang/mock/mockgen@v1.6.0 && go generate ./... && \
+    go mod tidy && \
+    go build -o kserve-adapter cmd/kserve-adapter/main.go
 
-RUN go install github.com/golang/mock/mockgen@v1.6.0 && go generate ./...
-RUN go mod tidy
-RUN go build -o kserve-adapter cmd/kserve-adapter/main.go
 
 FROM golang:1.19.8-bullseye
-
 WORKDIR /root/
 
-RUN curl https://baltocdn.com/helm/signing.asc | apt-key add -
-RUN apt-get install apt-transport-https --yes
-RUN echo "deb https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list
-
-RUN apt-get update
-RUN apt-get install helm
+# Install Helm in a single layer
+RUN curl https://baltocdn.com/helm/signing.asc | apt-key add - && \
+    apt-get install -y --no-install-recommends apt-transport-https && \
+    echo "deb https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends helm && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /kserve-adapter/kserve-adapter .
 COPY --from=builder /kserve-adapter/pkg/helm/data pkg/helm/data
 
-ENV API_SERVER_PORT=10000
-ENV CHART_WORKSPACE_PATH="/root/pkg/helm/data"
+ENV API_SERVER_PORT=10000 CHART_WORKSPACE_PATH="/root/pkg/helm/data"
+
+
 EXPOSE 10000
-
 ENTRYPOINT ["./kserve-adapter"]
-
-
