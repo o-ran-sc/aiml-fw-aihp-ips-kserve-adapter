@@ -31,12 +31,20 @@ RUN go install github.com/golang/mock/mockgen@v1.6.0 && go generate ./... && \
 FROM golang:1.19.8-bullseye
 WORKDIR /root/
 
-# Install Helm in a single layer
-RUN curl https://baltocdn.com/helm/signing.asc | apt-key add - && \
-    apt-get install -y --no-install-recommends apt-transport-https && \
-    echo "deb https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends helm && \
+# Install Helm via the official upstream installer. The previous
+# baltocdn.com apt-repo approach broke for two compounding reasons:
+# 1. 'apt-key add' was deprecated in Debian Buster and removed entirely
+#    from Debian Bookworm onward; on Bullseye it now exits non-zero.
+# 2. The baltocdn.com Helm CDN itself has been retired (NXDOMAIN from
+#    Google 8.8.8.8 and Cloudflare 1.1.1.1), so the repository URL no
+#    longer resolves regardless of the keyring mechanism used.
+# The upstream 'get-helm-3' script downloads the latest Helm v3.x
+# binary from get.helm.sh, verifies its checksum, and installs it into
+# /usr/local/bin. This mirrors the install method documented at
+# https://helm.sh/docs/intro/install/#from-script.
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends curl ca-certificates && \
+    curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
